@@ -1,0 +1,28 @@
+.sombreado {
+     background-color: rgba(0, 0, 0, 0.6)
+     }
+.fondohero{
+    background-image: url(../assets/imagenes/4e419fc45af00344198accd89ef55c1d06f46a89.png);
+    background-size: 100% auto;
+    
+    height: 100%;}
+.verdeint{
+  background-color: #2BFF52;
+}
+.negroint{
+     background-color: #0B0800;
+}
+.blancoint{
+     background-color: #FFFFFF;
+}
+.jost{
+  font-family: "Jost", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+.bebas {
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
