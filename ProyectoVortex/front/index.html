@@ -21,39 +21,34 @@
 
     <header>
         <section>
-            <nav class="navbar navbar-light verdeint">
-                <div class="container-fluid">
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <a class="navbar-brand mx-auto" href="#hero">
-                        <img src="../front/dist/assets/logos/FD2.png" alt="FitPower" height="36">
+            <nav class="navbar align-items-center" style="background-color:#2BFF52;">
+        <div class="container-fluid ">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+                    
+                   
+                <div class="d-flex  ">
+                    <a class="navbar-brand text-center "href="#hero">
+                        
+                        <img src="../front/dist/assets/logos/FD2.png" alt="FitPower" class=""  height="">
                     </a>
-                    <form id="formBuscar" class="navbar-search">
-                        <input id="inputBuscar" type="search" placeholder="Buscar...">
-                        <button type="submit"><i class="bi bi-search">🔍</i></button>
-                    </form>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link jost" aria-current="page" href="#coaches">Coaches</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link jost" href="#mensualidades">Mensualidades</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link jost" href="#entrenamientos">Entrenamientos</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link jost" href="dist/pages/Catalogo.html">Catálogo</a>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
-            </nav>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="#coaches">Coaches</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#mensualidades">Mensualidades</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#entrenamientos">Entrenamientos</a></li>
+                </ul>
+            </div>
+            <div class="d-flex"></div>
+        </div>
+    </nav>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
         </section>
     </header>
-
+ 
 
     <main>
         <section id="hero">
@@ -78,7 +73,7 @@
                 </div>
             </div>
 
-            <div class="d-flex flex-wrap align-items-center justify-content-center coaches-track" id="coachesTrack">
+            <div class=" d-flex flex-wrap align-items-center justify-content-center coaches-track" id="coachesTrack">
                 <div class="coach-card m-3">
                     <div class="coach-photo container-fluid p-0 rounded-3 verdeint">
                         <img src="../front/dist/assets/imagenes/969d05d03ac2acd2f6f83c5b6d515dfe3e217252.png" alt="Auron">
@@ -103,16 +98,24 @@
                     <div class="stars">★★★★★</div>
                     <p class="jost jost-age">29 años</p>
                 </div>
+                
             </div>
-            <div class="carousel-nav" id="coachesNav">
+            
+            
+            <div class=" carousel-nav  " id="coachesNav">
+            
                 <button class="carousel-arrow" id="coachPrev" aria-label="Anterior">‹</button>
                 <button class="carousel-arrow" id="coachNext" aria-label="Siguiente">›</button>
+            
             </div>
         </section>
 
+
         <section id="mensualidades">
-            <div class="d-flex text-white align-items-center justify-content-center">
-                <h1>MENSUALIDADES</h1>
+           
+           
+            <div class="d-flex mt-5 text-white align-items-center justify-content-center">
+                <h1 class="mt-5">MENSUALIDADES</h1>
             </div>
 
             <div class="d-flex flex-wrap justify-content-center align-items-start planes-track" id="planesTrack">
@@ -213,8 +216,8 @@
     <footer class="negroint">
         <div class="container py-4">
             <div class="row">
-                <div class="col-12 col-md-4 mb-4">
-                    <span class="footer-brand verdeint bebas">FITPOWER</span>
+                <div class="col-4 col-md-4 mb-4">
+                    <img class=" logo2 " src="../front/dist/assets/logos/FD4.png">
                     <p class="jost mt-3 text-secondary">Tu gimnasio, tus reglas. Entrená con los mejores coaches y encontrá el plan que va con vos.</p>
                     <div class="footer-social">
                         <a href="#">📷</a>
@@ -222,7 +225,7 @@
                         <a href="#">🐦</a>
                     </div>
                 </div>
-                <div class="col-6 col-md-4 footer-links mb-4">
+                <div class="col-3 col-md-4 footer-links mb-4">
                     <h6 class="jost">ENLACES</h6>
                     <ul class="jost">
                         <li><a href="#coaches">Coaches</a></li>
@@ -231,7 +234,7 @@
                         <li><a href="dist/pages/Catalogo.html">Catálogo</a></li>
                     </ul>
                 </div>
-                <div class="col-6 col-md-4 footer-links mb-4">
+                <div class="col-3 col-md-4 footer-links mb-4">
                     <h6 class="jost">CONTACTO</h6>
                     <ul class="jost">
                         <li><a href="#">info@fitpower.com</a></li>

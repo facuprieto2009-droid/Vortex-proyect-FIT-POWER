@@ -26,6 +26,13 @@
     font-weight: 400;
     font-style: normal;
 }
+.logo2 {
+    height:40px;
+    width: 40px;
+}
+.posi {
+    transform: translate(0vw,10vh)
+}
 
 body {
     font-family: "Jost", sans-serif;
@@ -42,6 +49,7 @@ a {
 .navbar.verdeint {
     padding: 10px 0;
 }
+
 .navbar-brand img {
     height: 40px;
 }
@@ -110,7 +118,8 @@ a {
     color: #fff;
 }
 .coach-card {
-    width: 220px;
+    height:65vh;
+    width: 20vw;
     text-align: center;
 }
 .coach-photo {
@@ -119,7 +128,7 @@ a {
 }
 .coach-photo img {
     width: 100%;
-    height: 260px;
+    height: 55vh;
     object-fit: cover;
     display: block;
 }
@@ -147,6 +156,7 @@ a {
     border-radius: 16px;
     padding: 20px;
     width: 260px;
+    height:485px;
     text-align: center;
     position: relative;
     transition: transform .2s ease;
