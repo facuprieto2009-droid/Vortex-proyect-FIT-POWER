@@ -1,0 +1,319 @@
+.sombreado {
+    background-color: rgba(0, 0, 0, 0.6)
+}
+.fondohero {
+    background-image: url(../assets/imagenes/4e419fc45af00344198accd89ef55c1d06f46a89.png);
+    background-size: auto;
+    height: 100%;
+}
+.verdeint {
+    background-color: #2BFF52;
+}
+.negroint {
+    background-color: #0B0800;
+}
+.blancoint {
+    background-color: #FFFFFF;
+}
+.jost {
+    font-family: "Jost", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+.bebas {
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+body {
+    font-family: "Jost", sans-serif;
+    color: #fff;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Bebas Neue", sans-serif;
+    letter-spacing: 1px;
+}
+a {
+    text-decoration: none;
+}
+
+.navbar.verdeint {
+    padding: 10px 0;
+}
+.navbar-brand img {
+    height: 40px;
+}
+.navbar-toggler {
+    border: none;
+    background: transparent;
+}
+.navbar-toggler-icon {
+    width: 28px;
+    height: 28px;
+    filter: brightness(0);
+}
+.navbar-collapse {
+    background-color: #0B0800;
+    margin-top: 12px;
+    padding: 16px 20px;
+    border-radius: 12px;
+}
+.navbar-collapse .nav-link {
+    color: #fff !important;
+    padding: 8px 0;
+}
+.navbar-collapse .nav-link:hover {
+    color: #2BFF52 !important;
+}
+.navbar-search {
+    background-color: #fff;
+    border-radius: 50px;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    max-width: 220px;
+}
+.navbar-search input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font-family: "Jost", sans-serif;
+}
+.navbar-search button {
+    border: none;
+    background: transparent;
+    color: #0B0800;
+}
+
+.fondohero {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 60vh;
+}
+.fondohero h1 {
+    font-size: 2.6rem;
+    text-transform: uppercase;
+}
+.promo-banner {
+    color: #0B0800;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+#coaches h1 {
+    font-size: 2.2rem;
+    margin: 20px 0;
+    color: #fff;
+}
+.coach-card {
+    width: 220px;
+    text-align: center;
+}
+.coach-photo {
+    overflow: hidden;
+    border-radius: 12px;
+}
+.coach-photo img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    display: block;
+}
+.coach-card h3 {
+    margin-top: 12px;
+    margin-bottom: 2px;
+    font-size: 1.6rem;
+}
+.stars {
+    color: #2BFF52;
+    letter-spacing: 3px;
+}
+.coach-card p.jost-age {
+    font-size: 0.8rem;
+    color: #ccc;
+    margin-top: 2px;
+}
+
+#mensualidades h1 {
+    font-size: 2.2rem;
+    margin: 20px 0;
+}
+.plan-card {
+    color: #0B0800;
+    border-radius: 16px;
+    padding: 20px;
+    width: 260px;
+    text-align: center;
+    position: relative;
+    transition: transform .2s ease;
+}
+.plan-card.destacado {
+    transform: translateY(-14px);
+    box-shadow: 0 10px 25px rgba(43,255,82,0.35);
+}
+.plan-card:hover {
+    transform: translateY(-6px);
+}
+.plan-card.destacado:hover {
+    transform: translateY(-18px);
+}
+.plan-badge {
+    position: absolute;
+    top: -12px;
+    right: 14px;
+    background-color: #0B0800;
+    color: #2BFF52;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 50px;
+    letter-spacing: 1px;
+}
+.plan-card .precio {
+    font-size: 2.4rem;
+    margin-bottom: 0;
+}
+.plan-card ul {
+    text-align: left;
+    font-size: 0.9rem;
+    min-height: 170px;
+}
+.plan-card ul li {
+    margin-bottom: 8px;
+}
+.plan-card .btn-suscribir {
+    background-color: #0B0800;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 8px 24px;
+    font-weight: 600;
+    width: 100%;
+}
+.plan-card .btn-suscribir:hover {
+    background-color: #1a1400;
+    color: #2BFF52;
+}
+.plan-card.seleccionado {
+    outline: 3px solid #fff;
+}
+
+#entrenamientos h1 {
+    font-size: 2.2rem;
+    margin: 20px 0;
+}
+.badge.dia {
+    cursor: pointer;
+    color: #0B0800 !important;
+    background-color: #2BFF52;
+    border: 2px solid transparent;
+    transition: all .15s ease;
+}
+.badge.dia.activo {
+    background-color: #0B0800;
+    color: #2BFF52 !important;
+    border: 2px solid #2BFF52;
+}
+.entreno-card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 220px;
+    margin: 6px;
+    padding: 0 !important;
+}
+.entreno-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.entreno-card .card-img-overlay {
+    background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0));
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+.entreno-card .card-title {
+    font-size: 1.3rem;
+    margin-bottom: 0;
+}
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 16px 0 30px;
+}
+.carousel-dots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #555;
+    cursor: pointer;
+    transition: background-color .2s ease;
+}
+.carousel-dots span.activo {
+    background-color: #2BFF52;
+}
+
+footer {
+    margin-top: 40px;
+}
+footer .footer-brand {
+    padding: 16px 24px;
+    border-radius: 10px;
+    color: #0B0800;
+    font-size: 1.6rem;
+    display: inline-block;
+}
+footer .footer-links h6 {
+    color: #2BFF52;
+    margin-bottom: 14px;
+    font-size: 1rem;
+}
+footer .footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+footer .footer-links ul li {
+    margin-bottom: 8px;
+}
+footer .footer-links ul li a {
+    color: #ccc;
+}
+footer .footer-links ul li a:hover {
+    color: #2BFF52;
+}
+footer .footer-bottom {
+    border-top: 1px solid #222;
+    padding: 14px 0;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #888;
+}
+footer .footer-social a {
+    color: #fff;
+    font-size: 1.2rem;
+    margin-right: 14px;
+}
+footer .footer-social a:hover {
+    color: #2BFF52;
+}
+
+#btnArriba {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: none;
+    background-color: #2BFF52;
+    color: #0B0800;
+    border: none;
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    font-size: 1.2rem;
+    z-index: 999;
+}

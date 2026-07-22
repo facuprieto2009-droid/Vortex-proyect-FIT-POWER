@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+
+  # Servidor Web + PHP
+  app:
+    image: php:8.2-apache
+    container_name: mvc_php_app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    #  Activa el módulo y luego inicia Apache en primer plano
+    command: bash -c "a2enmod rewrite && apache2-foreground"
+    depends_on:
+      - db
+
+  # Base de Datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: mvc_mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: mi_base_de_datos
+      MYSQL_USER: usuario
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # Interfaz gráfica para MySQL
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: mvc_phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+    depends_on:
+      - db
+
+volumes:
+  db_data:
