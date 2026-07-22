@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitPower</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="dist/css/style.css"> 
+    <link rel="stylesheet" href="dist/css/mobile.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+
+</head>
+<body class="negroint">
+
+    <header>
+        <section>
+            <nav class="navbar navbar-light verdeint">
+                <div class="container-fluid">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <a class="navbar-brand mx-auto" href="#hero">
+                        <img src="../front/dist/assets/logos/FD2.png" alt="FitPower" class="" height="36">
+                    </a>
+                    <form id="formBuscar" class="navbar-search">
+                        <input id="inputBuscar" type="search" placeholder="Buscar...">
+                        <button type="submit"><i class="bi bi-search">🔍</i></button>
+                    </form>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link jost" aria-current="page" href="#coaches">Coaches</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link jost" href="#mensualidades">Mensualidades</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link jost" href="#entrenamientos">Entrenamientos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link jost" href="dist/pages/Catalogo.html">Catálogo</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </section>
+    </header>
+
+
+    <main>
+        <section id="hero">
+            <div class="text-center bg-image rounded-3 fondohero">
+                <div class="mask sombreado">
+                    <div class="d-flex justify-content-center align-items-center vh-100">
+                        <div class="text-white">
+                            <h1 class="mb-3">AYUDA DE 1ER NIVEL</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h2 class="p-3 m-2 verdeint rounded jost text-center promo-banner">50% off en tu 1er mes con brou</h2>
+            </div>
+        </section>
+
+        <section id="coaches">
+            <div class="d-flex justify-content-center">
+                <div class="text-white">
+                    <h1>COACHES</h1>
+                </div>
+            </div>
+
+            <div class="d-flex flex-wrap align-items-center justify-content-center coaches-track" id="coachesTrack">
+                <div class="coach-card m-3">
+                    <div class="coach-photo container-fluid p-0 rounded-3 verdeint">
+                        <img src="../front/dist/assets/imagenes/969d05d03ac2acd2f6f83c5b6d515dfe3e217252.png" alt="Auron">
+                    </div>
+                    <h3 class="bebas">Auron</h3>
+                    <div class="stars">★★★★★</div>
+                    <p class="jost jost-age">39 años</p>
+                </div>
+                <div class="coach-card m-3">
+                    <div class="coach-photo container-fluid p-0 rounded-3 verdeint">
+                        <img src="../front/dist/assets/imagenes/0b07bbe1d7e44a07d496d7a200940be04afe77a7.png" alt="Jordi Wild">
+                    </div>
+                    <h3 class="bebas">Jordi Wild</h3>
+                    <div class="stars">★★★★★</div>
+                    <p class="jost jost-age">41 años</p>
+                </div>
+                <div class="coach-card m-3">
+                    <div class="coach-photo container-fluid p-0 rounded-3 verdeint">
+                        <img src="../front/dist/assets/imagenes/0dc7051142b82d82519163fe840ca6d6232cb503.png" alt="The Grefg">
+                    </div>
+                    <h3 class="bebas">The Grefg</h3>
+                    <div class="stars">★★★★★</div>
+                    <p class="jost jost-age">29 años</p>
+                </div>
+            </div>
+            <div class="carousel-nav" id="coachesNav">
+                <button class="carousel-arrow" id="coachPrev" aria-label="Anterior">‹</button>
+                <button class="carousel-arrow" id="coachNext" aria-label="Siguiente">›</button>
+            </div>
+        </section>
+
+        <section id="mensualidades">
+            <div class="d-flex text-white align-items-center justify-content-center">
+                <h1>MENSUALIDADES</h1>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-center align-items-start planes-track" id="planesTrack">
+                <div class="plan-card verdeint m-3">
+                    <p class="precio bebas">26 usd</p>
+                    <p class="jost">Al mes</p>
+                    <ul class="jost">
+                        <li>75% de la maquinaria</li>
+                        <li>1 botella de 500ml (recarga 2 veces por sem.)</li>
+                        <li>2 horas al día</li>
+                        <li>1 clase de boxeo a la semana</li>
+                    </ul>
+                    <button class="btn btn-suscribir jost">Suscribirse</button>
+                </div>
+
+                <div class="plan-card destacado verdeint m-3">
+                    <span class="plan-badge">OMEGA</span>
+                    <p class="precio bebas">35 usd</p>
+                    <p class="jost">Al mes</p>
+                    <ul class="jost">
+                        <li>Coach incluido + guía personalizada</li>
+                        <li>Maquinaria de todo el gimnasio</li>
+                        <li>Agua ilimitada</li>
+                        <li>Baños</li>
+                        <li>2 clases de boxeo a la semana</li>
+                    </ul>
+                    <button class="btn btn-suscribir jost">Suscribirse</button>
+                </div>
+
+                <div class="plan-card verdeint m-3">
+                    <p class="precio bebas">50 usd</p>
+                    <p class="jost">Al mes</p>
+                    <ul class="jost">
+                        <li>Coach incluido + guía personalizada</li>
+                        <li>1 botella de 1,2L de gatorade (recarga 2 veces por sem.)</li>
+                        <li>Horas ilimitadas</li>
+                        <li>3 clases de boxeo a la semana</li>
+                        <li>Baño + ducha incluida + 2 toallas</li>
+                        <li>2 lockers para el usuario</li>
+                    </ul>
+                    <button class="btn btn-suscribir jost">Suscribirse</button>
+                </div>
+            </div>
+            <div class="carousel-nav" id="planesNav">
+                <button class="carousel-arrow" id="planPrev" aria-label="Anterior">‹</button>
+                <button class="carousel-arrow" id="planNext" aria-label="Siguiente">›</button>
+            </div>
+        </section>
+
+        <section id="entrenamientos">
+            <div class="d-flex text-white justify-content-center">
+                <h1>ENTRENAMIENTOS</h1>
+            </div>
+
+            <div class="d-flex flex-wrap jost justify-content-center">
+                <span class="badge rounded-pill dia m-1 p-3 fs-6">Lunes</span>
+                <span class="badge rounded-pill dia m-1 p-3 fs-6">Martes</span>
+                <span class="badge rounded-pill dia m-1 p-3 fs-6">Miércoles</span>
+                <span class="badge rounded-pill dia m-1 p-3 fs-6">Jueves</span>
+                <span class="badge rounded-pill dia m-1 p-3 fs-6">Viernes</span>
+                <span class="badge rounded-pill dia m-1 p-3 fs-6">Sábado</span>
+                <span class="badge rounded-pill dia m-1 p-3 fs-6">Domingo</span>
+            </div>
+
+            <div class="container">
+                <div class="row flex-nowrap flex-wrap-md" id="entrenoTrack">
+                    <div class="col entreno-card card text-bg-dark">
+                        <img src="../front/dist/assets/imagenes/918f05a091478ae8ae9ebae327fd23cb51170738 (1).png" class="card-img" alt="Press banca">
+                        <div class="card-img-overlay">
+                            <h5 class="card-title bebas">PRESS BANCA</h5>
+                            <p class="card-text jost">3 x 12</p>
+                        </div>
+                    </div>
+                    <div class="col entreno-card card text-bg-dark">
+                        <img src="../front/dist/assets/imagenes/626c12f870fdba87beb357d651e0f4fcfae907a3.png" class="card-img" alt="Bicep curl">
+                        <div class="card-img-overlay">
+                            <h5 class="card-title bebas">BICEP CURL</h5>
+                            <p class="card-text jost">3 x 10</p>
+                        </div>
+                    </div>
+                    <div class="col entreno-card card text-bg-dark">
+                        <img src="../front/dist/assets/imagenes/68758eb591f39ed9cbd51cc76c407cbe3a7e51a9.png" class="card-img" alt="Tricep pushdown">
+                        <div class="card-img-overlay">
+                            <h5 class="card-title bebas">TRICEP PUSHDOWN</h5>
+                            <p class="card-text jost">3 x 12</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-dots">
+                <span class="activo"></span>
+                <span></span>
+                <span></span>
+            </div>
+        </section>
+    </main>
+
+    <footer class="negroint">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-12 col-md-4 mb-4">
+                    <span class="footer-brand verdeint bebas">FITPOWER</span>
+                    <p class="jost mt-3 text-secondary">Tu gimnasio, tus reglas. Entrená con los mejores coaches y encontrá el plan que va con vos.</p>
+                    <div class="footer-social">
+                        <a href="#">📷</a>
+                        <a href="#">📘</a>
+                        <a href="#">🐦</a>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 footer-links mb-4">
+                    <h6 class="jost">ENLACES</h6>
+                    <ul class="jost">
+                        <li><a href="#coaches">Coaches</a></li>
+                        <li><a href="#mensualidades">Mensualidades</a></li>
+                        <li><a href="#entrenamientos">Entrenamientos</a></li>
+                        <li><a href="dist/pages/Catalogo.html">Catálogo</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-md-4 footer-links mb-4">
+                    <h6 class="jost">CONTACTO</h6>
+                    <ul class="jost">
+                        <li><a href="#">info@fitpower.com</a></li>
+                        <li><a href="#">+598 99 999 999</a></li>
+                        <li><a href="#">Montevideo, Uruguay</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom jost">
+            2026 FitPower. Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <button id="btnArriba" title="Volver arriba">↑</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmxc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="dist/js/script.js"></script>
+</body>
+</html>
