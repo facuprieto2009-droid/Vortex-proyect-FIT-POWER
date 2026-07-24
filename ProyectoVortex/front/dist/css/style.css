@@ -1,3 +1,4 @@
+/* ===== CSS ORIGINAL DEL USUARIO ===== */
 .sombreado {
     background-color: rgba(0, 0, 0, 0.6)
 }
@@ -26,14 +27,8 @@
     font-weight: 400;
     font-style: normal;
 }
-.logo2 {
-    height:40px;
-    width: 40px;
-}
-.posi {
-    transform: translate(0vw,10vh)
-}
 
+/* ===== AJUSTES GENERALES ===== */
 body {
     font-family: "Jost", sans-serif;
     color: #fff;
@@ -46,10 +41,10 @@ a {
     text-decoration: none;
 }
 
+/* ===== NAVBAR ===== */
 .navbar.verdeint {
     padding: 10px 0;
 }
-
 .navbar-brand img {
     height: 40px;
 }
@@ -96,6 +91,7 @@ a {
     color: #0B0800;
 }
 
+/* ===== HERO ===== */
 .fondohero {
     background-position: center;
     background-repeat: no-repeat;
@@ -112,14 +108,14 @@ a {
     letter-spacing: 1px;
 }
 
+/* ===== COACHES ===== */
 #coaches h1 {
     font-size: 2.2rem;
     margin: 20px 0;
     color: #fff;
 }
 .coach-card {
-    height:65vh;
-    width: 20vw;
+    width: 220px;
     text-align: center;
 }
 .coach-photo {
@@ -128,7 +124,7 @@ a {
 }
 .coach-photo img {
     width: 100%;
-    height: 55vh;
+    height: 260px;
     object-fit: cover;
     display: block;
 }
@@ -147,6 +143,7 @@ a {
     margin-top: 2px;
 }
 
+/* ===== MENSUALIDADES ===== */
 #mensualidades h1 {
     font-size: 2.2rem;
     margin: 20px 0;
@@ -156,7 +153,6 @@ a {
     border-radius: 16px;
     padding: 20px;
     width: 260px;
-    height:485px;
     text-align: center;
     position: relative;
     transition: transform .2s ease;
@@ -212,6 +208,7 @@ a {
     outline: 3px solid #fff;
 }
 
+/* ===== ENTRENAMIENTOS ===== */
 #entrenamientos h1 {
     font-size: 2.2rem;
     margin: 20px 0;
@@ -269,6 +266,7 @@ a {
     background-color: #2BFF52;
 }
 
+/* ===== FOOTER ===== */
 footer {
     margin-top: 40px;
 }
@@ -313,6 +311,7 @@ footer .footer-social a:hover {
     color: #2BFF52;
 }
 
+/* Botón volver arriba */
 #btnArriba {
     position: fixed;
     bottom: 20px;
@@ -326,4 +325,205 @@ footer .footer-social a:hover {
     height: 46px;
     font-size: 1.2rem;
     z-index: 999;
+}
+
+/* ===== CATALOGO / PRODUCTOS - HERO ===== */
+.fondocatalogo {
+    background-image: url(../assets/imagenes/catalogo-fondo.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 30vh;
+}
+.fondocatalogo h1 {
+    font-size: 2.4rem;
+}
+#categorias h2 {
+    font-size: 1.6rem;
+    margin: 24px 0;
+    text-align: center;
+}
+
+/* ===== TARJETAS DE CATEGORIA ===== */
+.categoria-card {
+    background-color: #fff;
+    color: #0B0800;
+    border-radius: 14px;
+    width: 240px;
+    padding: 16px;
+    text-align: center;
+    margin: 14px;
+}
+.categoria-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+}
+.categoria-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+.categoria-card .btn-ver {
+    background-color: #2BFF52;
+    color: #0B0800;
+    border: none;
+    border-radius: 50px;
+    padding: 8px 30px;
+    font-weight: 700;
+    width: 100%;
+}
+.categoria-card .btn-ver:hover {
+    background-color: #22cc42;
+}
+
+/* ===== BANNER DE CATEGORIA (Productos) ===== */
+.banner-categoria {
+    color: #0B0800;
+    font-weight: 700;
+    font-size: 1.6rem;
+    text-align: center;
+    letter-spacing: 1px;
+    margin: 10px auto 30px;
+    max-width: 400px;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+/* ===== TARJETAS DE PRODUCTO ===== */
+#productosGrid {
+    max-width: 900px;
+    margin: 0 auto;
+}
+.producto-card {
+    background-color: #fff;
+    color: #0B0800;
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    margin: 14px;
+    width: 260px;
+}
+.producto-card img {
+    width: 100%;
+    height: 170px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+.producto-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 4px;
+}
+.producto-card .precio-producto {
+    font-family: "Jost", sans-serif;
+    font-weight: 600;
+    color: #0B0800;
+}
+
+/* ===== LOGIN / REGISTRO ===== */
+.auth-wrap {
+    display: flex;
+    min-height: 80vh;
+    flex-wrap: wrap;
+}
+.auth-imagen {
+    flex: 1 1 45%;
+    min-height: 400px;
+    background-position: center;
+    background-size: cover;
+    filter: grayscale(0.3);
+}
+.auth-panel {
+    flex: 1 1 45%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+}
+.auth-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background-color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+.auth-panel h1 {
+    font-size: 2rem;
+    margin-bottom: 26px;
+}
+.auth-form {
+    width: 100%;
+    max-width: 320px;
+}
+.auth-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #555;
+    padding: 10px 4px;
+    margin-bottom: 24px;
+}
+.auth-input input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    width: 100%;
+    font-family: "Jost", sans-serif;
+}
+.auth-input input::placeholder {
+    color: #999;
+}
+.btn-auth {
+    background-color: #2BFF52;
+    color: #0B0800;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 0;
+    width: 100%;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+.btn-auth:hover {
+    background-color: #22cc42;
+}
+.fake-captcha {
+    background-color: #fff;
+    color: #0B0800;
+    border-radius: 6px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    user-select: none;
+}
+.fake-captcha .check-box {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #999;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.fake-captcha.marcado .check-box {
+    background-color: #2BFF52;
+    border-color: #2BFF52;
+}
+.auth-link {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+.auth-link a {
+    color: #2BFF52;
+    font-weight: 700;
 }
