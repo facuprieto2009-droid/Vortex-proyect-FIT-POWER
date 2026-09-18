@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', async function () {
     document.getElementById('filtroRol').addEventListener('change', e => cargarUsuarios(e.target.value));
     document.getElementById('tablaUsuarios').addEventListener('click', onClickTablaUsuarios);
     document.getElementById('formEditarUsuario').addEventListener('submit', guardarUsuario);
+    document.getElementById('formCrearUsuario').addEventListener('submit', crearUsuario);
+    document.getElementById('modalCrearUsuario').addEventListener('hidden.bs.modal', () => {
+        document.getElementById('formCrearUsuario').reset();
+        document.getElementById('crearUsuarioMsg').textContent = '';
+    });
 
     document.getElementById('formFiltroPagos').addEventListener('submit', e => {
         e.preventDefault();
@@ -30,6 +35,11 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
     document.getElementById('formAgregarPuntos').addEventListener('submit', agregarPuntos);
     document.getElementById('tablaPuntos').addEventListener('click', onClickTablaPuntos);
+
+    await cargarProductos();
+    document.getElementById('filtroCategoriaProductos').addEventListener('change', e => cargarProductos(e.target.value));
+    document.getElementById('formCrearProducto').addEventListener('submit', crearProducto);
+    document.getElementById('tablaProductos').addEventListener('click', onClickTablaProductos);
 });
 
 function avisar(contenedorId, res) {
@@ -52,6 +62,9 @@ async function cargarRoles() {
 
     const editSel = document.getElementById('editUsuarioRol');
     editSel.innerHTML = rolesCache.map(r => `<option value="${r.id_rol}">${r.nombre_rol}</option>`).join('');
+
+    const nuevoSel = document.getElementById('nuevoUsuarioRol');
+    nuevoSel.innerHTML = rolesCache.map(r => `<option value="${r.id_rol}">${r.nombre_rol}</option>`).join('');
 }
 
 async function cargarUsuarios(rol) {
@@ -122,6 +135,25 @@ async function guardarUsuario(e) {
         cargarUsuarios(document.getElementById('filtroRol').value);
     } else {
         alert(res.message || 'No se pudo guardar');
+    }
+}
+
+async function crearUsuario(e) {
+    e.preventDefault();
+    const datos = {
+        nombre: document.getElementById('nuevoUsuarioNombre').value,
+        email: document.getElementById('nuevoUsuarioEmail').value,
+        password: document.getElementById('nuevoUsuarioPassword').value,
+        especialidad: document.getElementById('nuevoUsuarioEspecialidad').value || null,
+        id_rol: document.getElementById('nuevoUsuarioRol').value,
+    };
+
+    const res = await API.request('/admin/usuarios', 'POST', datos);
+    avisar('crearUsuarioMsg', res);
+
+    if (res.status === 'ok') {
+        bootstrap.Modal.getInstance(document.getElementById('modalCrearUsuario')).hide();
+        cargarUsuarios(document.getElementById('filtroRol').value);
     }
 }
 
@@ -272,4 +304,63 @@ async function eliminarPuntos(idPunto) {
     const res = await API.request(`/admin/puntos/${idPunto}`, 'DELETE');
     avisar('msgPuntos', res);
     if (res.status === 'ok') cargarPuntos(document.getElementById('filtroPersonaPuntos').value || null);
+}
+
+// ===== CATÁLOGO DE PRODUCTOS =====
+
+async function cargarProductos(categoria) {
+    const query = categoria ? `?categoria=${encodeURIComponent(categoria)}` : '';
+    const res = await API.request(`/productos${query}`);
+    const tbody = document.querySelector('#tablaProductos tbody');
+    tbody.innerHTML = '';
+
+    if (res.status !== 'ok') {
+        avisar('msgProductos', res);
+        return;
+    }
+
+    res.productos.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${p.imagen_url ? `<img src="${p.imagen_url}" alt="${p.nombre}" style="width:50px;height:50px;object-fit:cover;border-radius:6px">` : '—'}</td>
+            <td>${p.nombre}</td>
+            <td>${p.categoria}</td>
+            <td>${Number(p.precio).toFixed(2)} USD</td>
+            <td><button class="btn btn-sm btn-outline-danger" data-id="${p.id_producto}" data-accion="eliminar">Eliminar</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+async function crearProducto(e) {
+    e.preventDefault();
+    const datos = {
+        nombre: document.getElementById('nuevoProductoNombre').value,
+        categoria: document.getElementById('nuevoProductoCategoria').value,
+        precio: document.getElementById('nuevoProductoPrecio').value,
+        imagen_url: document.getElementById('nuevoProductoImagen').value || null,
+    };
+
+    const res = await API.request('/admin/productos', 'POST', datos);
+    avisar('msgProductos', res);
+
+    if (res.status === 'ok') {
+        document.getElementById('formCrearProducto').reset();
+        cargarProductos(document.getElementById('filtroCategoriaProductos').value);
+    }
+}
+
+function onClickTablaProductos(e) {
+    const btn = e.target.closest('button[data-accion]');
+    if (!btn) return;
+    if (btn.dataset.accion === 'eliminar') {
+        eliminarProducto(btn.dataset.id);
+    }
+}
+
+async function eliminarProducto(idProducto) {
+    if (!confirm('¿Eliminar este artículo del catálogo? También desaparecerá de la página pública.')) return;
+    const res = await API.request(`/admin/productos/${idProducto}`, 'DELETE');
+    avisar('msgProductos', res);
+    if (res.status === 'ok') cargarProductos(document.getElementById('filtroCategoriaProductos').value);
 }

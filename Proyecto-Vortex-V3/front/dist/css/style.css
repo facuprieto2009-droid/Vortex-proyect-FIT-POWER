@@ -346,7 +346,7 @@ footer .footer-social a:hover {
 
 /* ===== TARJETAS DE CATEGORIA ===== */
 .categoria-card {
-    background-color: #fff;
+    background-color: #2b2a2a;
     color: #0B0800;
     border-radius: 14px;
     width: 240px;
@@ -531,4 +531,21 @@ footer .footer-social a:hover {
 .logo2 {
     height:40px;
     width: 40px;
+}
+
+.btn-comprar {
+    background-color: #00ff55; /* Verde neón brillante */
+    color: #000000;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    width: 100%;
+    padding: 8px 0;
+    transition: background-color 0.2s ease;
+}
+
+.btn-comprar:hover {
+    background-color: #00cc44;
+    color: #000000;
 }

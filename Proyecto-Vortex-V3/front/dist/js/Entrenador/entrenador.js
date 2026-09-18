@@ -109,7 +109,7 @@ async function cargarEjercicios() {
     if (res.status !== 'ok') return;
     ejerciciosCache = res.ejercicios;
 
-    const selects = [document.getElementById('actividadEjercicio'), document.getElementById('rutinaEjercicioSelect')];
+    const selects = [document.getElementById('actividadEjercicio'), document.getElementById('rutinaEjercicioSelect'), document.getElementById('rutinaEjerciciosNuevos')];
     selects.forEach(sel => {
         if (!sel) return;
         sel.innerHTML = ejerciciosCache.map(ej => `<option value="${ej.id_ejercicio}">${ej.nombre} (${ej.grupo_muscular})</option>`).join('');
@@ -226,13 +226,27 @@ async function crearRutina(e) {
     e.preventDefault();
     const nombre = document.getElementById('rutinaNombre').value;
     const dias = document.getElementById('rutinaDias').value;
+    const selectEjercicios = document.getElementById('rutinaEjerciciosNuevos');
+    const idsEjercicios = Array.from(selectEjercicios.selectedOptions).map(opt => opt.value);
 
     const res = await API.request('/rutinas', 'POST', { nombre, dias_semana: dias });
-    avisar('msgRutinas', res);
-    if (res.status === 'ok') {
-        document.getElementById('formCrearRutina').reset();
-        cargarCatalogoRutinas();
+    if (res.status !== 'ok') {
+        avisar('msgCrearRutina', res);
+        return;
     }
+
+    // La rutina se crea primero (sin ejercicios); acá la vinculamos con cada ejercicio elegido.
+    for (const idEjercicio of idsEjercicios) {
+        await API.request(`/rutinas/${res.id_rutinas}/ejercicios`, 'POST', { id_ejercicio: idEjercicio });
+    }
+
+    avisar('msgCrearRutina', {
+        status: 'ok',
+        message: `Rutina creada con ${idsEjercicios.length} ejercicio(s) vinculado(s)`,
+    });
+
+    document.getElementById('formCrearRutina').reset();
+    cargarCatalogoRutinas();
 }
 
 async function asignarRutinaExistente(e) {
