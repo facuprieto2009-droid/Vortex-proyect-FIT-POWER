@@ -35,9 +35,13 @@
         <section class="mb-5">
             <h2 class="bebas">Usuarios y entrenadores</h2>
 
-            <div class="d-flex gap-2 mb-3 jost">
+            <div class="d-flex gap-2 mb-3 jost align-items-center">
                 <select id="filtroRol" class="form-select" style="max-width:220px"></select>
+                <button id="btnAbrirCrearUsuario" type="button" class="btn verdeint text-dark ms-auto" data-bs-toggle="modal" data-bs-target="#modalCrearUsuario">
+                    + Agregar usuario
+                </button>
             </div>
+            <div id="msgUsuarios"></div>
 
             <div class="table-responsive">
                 <table class="table table-dark table-striped align-middle" id="tablaUsuarios">
@@ -118,7 +122,87 @@
                 </table>
             </div>
         </section>
+
+        <!-- ===== CATÁLOGO DE PRODUCTOS ===== -->
+        <section class="mb-5">
+            <h2 class="bebas">Catálogo</h2>
+
+            <div class="d-flex gap-2 mb-3 jost">
+                <select id="filtroCategoriaProductos" class="form-select" style="max-width:220px">
+                    <option value="">Todas las categorías</option>
+                    <option value="Pesas">Pesas</option>
+                    <option value="Suplementos">Suplementos</option>
+                    <option value="Barras Proteicas">Barras Proteicas</option>
+                </select>
+            </div>
+
+            <form id="formCrearProducto" class="row g-2 mb-3 jost">
+                <div class="col-md-3">
+                    <input type="text" id="nuevoProductoNombre" class="form-control" placeholder="Nombre del artículo" required>
+                </div>
+                <div class="col-md-2">
+                    <select id="nuevoProductoCategoria" class="form-select" required>
+                        <option value="" disabled selected>Categoría</option>
+                        <option value="Pesas">Pesas</option>
+                        <option value="Suplementos">Suplementos</option>
+                        <option value="Barras Proteicas">Barras Proteicas</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" id="nuevoProductoPrecio" class="form-control" placeholder="Precio (USD)" min="0" step="0.01" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="url" id="nuevoProductoImagen" class="form-control" placeholder="URL de la imagen (opcional)">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn verdeint text-dark w-100">Agregar artículo</button>
+                </div>
+            </form>
+            <div id="msgProductos"></div>
+
+            <div class="table-responsive">
+                <table class="table table-dark table-striped align-middle" id="tablaProductos">
+                    <thead>
+                        <tr><th>Imagen</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th></th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
     </main>
+
+    <!-- Modal: crear usuario -->
+    <div class="modal fade" id="modalCrearUsuario" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content negroint jost">
+                <div class="modal-header">
+                    <h5 class="modal-title bebas">Agregar usuario</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formCrearUsuario">
+                        <label class="form-label small">Nombre</label>
+                        <input type="text" id="nuevoUsuarioNombre" class="form-control mb-2" required>
+
+                        <label class="form-label small">Email</label>
+                        <input type="email" id="nuevoUsuarioEmail" class="form-control mb-2" required>
+
+                        <label class="form-label small">Contraseña</label>
+                        <input type="password" id="nuevoUsuarioPassword" class="form-control mb-2" placeholder="Mínimo 6 caracteres" required minlength="6">
+
+                        <label class="form-label small">Especialidad (solo entrenadores)</label>
+                        <input type="text" id="nuevoUsuarioEspecialidad" class="form-control mb-2">
+
+                        <label class="form-label small">Rol</label>
+                        <select id="nuevoUsuarioRol" class="form-select mb-3"></select>
+
+                        <button type="submit" class="btn verdeint text-dark w-100">Crear usuario</button>
+                        <div id="crearUsuarioMsg" class="small mt-2"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal: editar usuario -->
     <div class="modal fade" id="modalEditarUsuario" tabindex="-1">
@@ -169,7 +253,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmxc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="../js/api.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/Administrador/admin.js"></script>

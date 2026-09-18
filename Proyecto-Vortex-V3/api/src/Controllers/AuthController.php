@@ -69,7 +69,7 @@ class AuthController {
         $modelo = new AuthModel($this->db);
         $usuario = $modelo->buscarPorEmail($email);
 
-        if (!$usuario || $password != $usuario['contrasena']) {
+        if (!$usuario || !password_verify($password, $usuario['contrasena'])) {
             return $this->responder(['status' => 'error', 'message' => 'Email o contraseña incorrectos'], 401);
         }
 

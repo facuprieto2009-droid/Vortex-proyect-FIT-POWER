@@ -50,6 +50,51 @@ class AdminController {
         $this->responder(['status' => 'ok', 'usuario' => $usuario]);
     }
 
+    // POST /admin/usuarios  body: { nombre, email, password, id_rol, especialidad?, fecha_nacimiento?, id_tipo_membresia? }
+    public function crearUsuario() {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $body = $this->cuerpo();
+
+        $nombre = trim($body['nombre'] ?? '');
+        $email = trim($body['email'] ?? '');
+        $password = $body['password'] ?? '';
+        $idRol = $body['id_rol'] ?? null;
+
+        if ($nombre === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || !$idRol) {
+            return $this->responder(['status' => 'error', 'message' => 'Faltan datos: nombre, email válido e id_rol son obligatorios'], 400);
+        }
+        if (strlen($password) < 6) {
+            return $this->responder(['status' => 'error', 'message' => 'La contraseña debe tener al menos 6 caracteres'], 400);
+        }
+
+        $modelo = new UsuarioModel($this->db);
+
+        // Evitar emails duplicados (persona.email es UNIQUE en la BD, pero validamos antes para dar un mensaje claro)
+        $existente = $modelo->listar();
+        if ($existente !== false) {
+            foreach ($existente as $u) {
+                if (strcasecmp($u['email'], $email) === 0) {
+                    return $this->responder(['status' => 'error', 'message' => 'Ese email ya está registrado'], 409);
+                }
+            }
+        }
+
+        $idUser = $modelo->crear([
+            'nombre' => $nombre,
+            'email' => $email,
+            'password' => $password,
+            'id_rol' => $idRol,
+            'especialidad' => $body['especialidad'] ?? null,
+            'fecha_nacimiento' => $body['fecha_nacimiento'] ?? null,
+            'id_tipo_membresia' => $body['id_tipo_membresia'] ?? null,
+        ]);
+
+        if ($idUser === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo crear el usuario'], 500);
+        }
+        $this->responder(['status' => 'ok', 'message' => 'Usuario creado', 'id_user' => $idUser], 201);
+    }
+
     // PUT /admin/usuarios/:id  body: { nombre?, id_rol?, email?, fecha_nacimiento?, especialidad?, id_tipo_membresia? }
     public function actualizarUsuario($idUser) {
         if (!Auth::requiereRol($this->rolesPermitidos)) return;

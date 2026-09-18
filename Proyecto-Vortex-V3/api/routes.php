@@ -43,6 +43,7 @@ $router->get('/ejercicios', 'EntrenadorController@verEjercicios');
 // ===== ADMINISTRADORES =====
 // Usuarios y entrenadores
 $router->get('/admin/usuarios', 'AdminController@verUsuarios');
+$router->post('/admin/usuarios', 'AdminController@crearUsuario');
 $router->get('/admin/usuarios/:id', 'AdminController@verUsuario');
 $router->put('/admin/usuarios/:id', 'AdminController@actualizarUsuario');
 $router->delete('/admin/usuarios/:id', 'AdminController@eliminarUsuario');
@@ -59,3 +60,9 @@ $router->get('/admin/puntos', 'AdminController@verPuntos');
 $router->post('/admin/puntos', 'AdminController@agregarPuntos');
 $router->put('/admin/puntos/:id', 'AdminController@actualizarPuntos');
 $router->delete('/admin/puntos/:id', 'AdminController@eliminarPuntos');
+
+// ===== CATÁLOGO DE PRODUCTOS =====
+// GET pública (la usan también las páginas de Pesas/Suplementos/Barras Proteicas)
+$router->get('/productos', 'ProductoController@verProductos');
+$router->post('/admin/productos', 'ProductoController@crearProducto');
+$router->delete('/admin/productos/:id', 'ProductoController@eliminarProducto');

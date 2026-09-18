@@ -122,7 +122,12 @@
                 <div class="col-md-4">
                     <button type="submit" class="btn verdeint text-dark w-100">Crear rutina</button>
                 </div>
+                <div class="col-md-8">
+                    <label for="rutinaEjerciciosNuevos" class="form-label small">Ejercicios (opcional, podés elegir varios)</label>
+                    <select id="rutinaEjerciciosNuevos" class="form-select" multiple size="6"></select>
+                </div>
             </form>
+            <div id="msgCrearRutina" class="mt-2"></div>
         </section>
     </main>
 
@@ -169,7 +174,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmxc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="../js/api.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/Entrenador/entrenador.js"></script>
