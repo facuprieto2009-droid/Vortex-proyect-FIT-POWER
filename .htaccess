@@ -1,0 +1,22 @@
+<IfModule mod_rewrite.c> 
+    RewriteEngine On
+
+    # ====================================================
+    # 1. TRÁFICO DE LA API (Los repartidores)
+    # ====================================================
+    # Si la URL solicitada empieza con "api/"...
+    RewriteCond %{REQUEST_URI} ^/api/
+    # ...y no es un archivo físico que exista (como una imagen)...
+    RewriteCond %{REQUEST_FILENAME} !-f
+    # ...y tampoco es una carpeta real...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    # ...entonces, manda TODO al index.php de la carpeta api.
+    RewriteRule ^api/(.*)$ /api/index.php [L,QSA]
+
+
+    # ====================================================
+    # 2. TRÁFICO DEL FRONTEND (Los clientes)
+    # ====================================================
+    # Redirige físicamente a la carpeta front cuando entran a la raíz
+    RewriteRule ^$ /front/index.html [R=301,L]
+</IfModule>

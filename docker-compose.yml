@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+
+  # Servidor Web + PHP (front + api)
+  app:
+    build: .
+    container_name: ${APP_NAME}_app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+
+  # Base de Datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: ${APP_NAME}_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: AN9E437N6F
+      MYSQL_DATABASE: FitPower
+      MYSQL_USER: usuario
+      MYSQL_PASSWORD: password
+    ports:
+      - "3310:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./api/config/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # Interfaz gráfica para MySQL
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: ${APP_NAME}_phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+    depends_on:
+      - db
+
+volumes:
+  db_data:

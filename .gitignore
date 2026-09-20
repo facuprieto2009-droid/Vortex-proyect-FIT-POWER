@@ -1,0 +1,154 @@
+# ==========================================
+# 1. ARCHIVOS DEL SISTEMA / SISTEMA OPERATIVO
+# ==========================================
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.VolumeIcon.icns
+.com.apple.timemachine.donotbackup
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ==========================================
+# 2. CONFIGURACIÓN DE EDITORES E IDEs
+# ==========================================
+# Visual Studio Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.code-workspace
+
+# PhpStorm / JetBrains (WebStorm, IntelliJ, etc.)
+.idea/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Editores de texto comunes
+.vim/
+.swp
+.swo
+*~
+*.bak
+
+# ==========================================
+# 3. VARIABLES DE ENTORNO Y CREDENCIALES (¡CRÍTICO!)
+# ==========================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+*.env.*
+!.env.example
+.config/
+certs/
+*.pem
+*.key
+*.pfx
+
+# ==========================================
+# 4. DEPENDENCIAS Y PAQUETES (Node, PHP, etc.)
+# ==========================================
+# Node / JavaScript
+node_modules/
+jspm_packages/
+.npm
+.eslintcache
+.stylelintcache
+.prettiercache
+yarn-error.log
+.pnpm-debug.log
+
+# PHP / Composer
+vendor/
+composer.phar
+.phpunit.result.cache
+
+# ==========================================
+# 5. COMPILACIÓN / COMPILADORES / BUILD OUT (Dist/Build)
+# ==========================================
+dist/
+!front/dist/
+!front/dist/**
+build/
+out/
+.next/
+.nuxt/
+.output/
+.cache/
+.parcel-cache/
+.turbo/
+.vite/
+
+# Archivos temporales de TypeScript y Rollup
+*.tsbuildinfo
+.rollup.cache/
+
+# ==========================================
+# 6. DOCKER Y VIRTUALIZACIÓN
+# ==========================================
+.docker/
+# Si guardas datos de bases de datos localmente mediante volúmenes, ignora la carpeta de datos:
+docker/data/
+db_data/
+.vagrant/
+
+# ==========================================
+# 7. LOGS, CACHE Y ARCHIVOS TEMPORALES
+# ==========================================
+*.log
+logs/
+*.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.lerna/
+
+# Archivos de caché de frameworks (Laravel, Symfony, etc. si aplica)
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+storage/logs/
+
+# ==========================================
+# 8. ARCHIVOS DE DISEÑO Y MULTIMEDIA (Opcional pero recomendado)
+# ==========================================
+# Ignorar archivos pesados o de origen si trabajas con layouts
+*.psd
+*.ai
+*.clip
+*.kra
+*.fig
+
+
+# Archivos subidos por usuarios / Media local de prueba
+front/dist/assets/imagenes/
+front/dist/assets/videos/
+**/uploads/
+*.mp4
+*.mkv
+*.mov

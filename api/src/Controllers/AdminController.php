@@ -1,0 +1,367 @@
+<?php
+namespace App\Controllers;
+
+use App\Models\UsuarioModel;
+use App\Models\PagoModel;
+use App\Models\PuntoModel;
+use App\Models\ProductoModel;
+use App\Utils\Auth;
+use App\Utils\ImagenUtil;
+
+class AdminController {
+    private $db;
+    private $rolesPermitidos = ['Administrador'];
+
+    public function __construct($db) {
+        $this->db = $db;
+    }
+
+    private function cuerpo() {
+        return json_decode(file_get_contents('php://input'), true) ?? [];
+    }
+
+    private function responder($data, $codigo = 200) {
+        http_response_code($codigo);
+        echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    }
+
+    // ===== Usuarios y entrenadores =====
+
+    // GET /admin/usuarios?rol=Entrenador
+    public function verUsuarios() {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $rol = $_GET['rol'] ?? null;
+        $modelo = new UsuarioModel($this->db);
+        $usuarios = $modelo->listar($rol);
+
+        if ($usuarios === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo obtener la lista de usuarios'], 500);
+        }
+        $this->responder(['status' => 'ok', 'usuarios' => $usuarios]);
+    }
+
+    // GET /admin/usuarios/:id
+    public function verUsuario($idUser) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $modelo = new UsuarioModel($this->db);
+        $usuario = $modelo->ver($idUser);
+
+        if ($usuario === false) {
+            return $this->responder(['status' => 'error', 'message' => 'Usuario no encontrado'], 404);
+        }
+        $this->responder(['status' => 'ok', 'usuario' => $usuario]);
+    }
+
+    // PUT /admin/usuarios/:id  body: { nombre?, id_rol?, email?, fecha_nacimiento?, especialidad?, id_tipo_membresia? }
+    public function actualizarUsuario($idUser) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $body = $this->cuerpo();
+        $modelo = new UsuarioModel($this->db);
+
+        $actual = $modelo->ver($idUser);
+        if ($actual === false) {
+            return $this->responder(['status' => 'error', 'message' => 'Usuario no encontrado'], 404);
+        }
+
+        $ok = $modelo->actualizar($idUser, $actual['id_persona'], $body);
+        if ($ok === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo actualizar el usuario'], 500);
+        }
+        $this->responder(['status' => 'ok', 'message' => 'Usuario actualizado']);
+    }
+
+    // DELETE /admin/usuarios/:id
+    public function eliminarUsuario($idUser) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $modelo = new UsuarioModel($this->db);
+        $ok = $modelo->eliminar($idUser);
+
+        if ($ok === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo eliminar el usuario'], 500);
+        }
+        $this->responder(['status' => 'ok', 'message' => 'Usuario eliminado']);
+    }
+
+    // GET /roles  -> lista de roles, para poblar el select del panel de admin
+    public function verRoles() {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $modelo = new UsuarioModel($this->db);
+        $roles = $modelo->listarRoles();
+
+        if ($roles === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo obtener los roles'], 500);
+        }
+        $this->responder(['status' => 'ok', 'roles' => $roles]);
+    }
+
+    // POST /admin/usuarios  body: { nombre, email, password, id_rol, fecha_nacimiento?, especialidad?, id_tipo_membresia }
+    public function crearUsuario() {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $body = $this->cuerpo();
+
+        // Validaciones mínimas necesarias
+        if (empty($body['nombre']) || empty($body['email']) || empty($body['password']) || empty($body['id_rol'])) {
+            return $this->responder(['status' => 'error', 'message' => 'Faltan campos obligatorios (nombre, email, password o id_rol)'], 400);
+        }
+
+        $modelo = new UsuarioModel($this->db);
+        
+        // Verifica si existe un método registrar o crear en tu UsuarioModel
+        $idUser = $modelo->crear($body); 
+
+        if ($idUser === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo crear el usuario. Es posible que el email ya exista.'], 500);
+        }
+
+        $this->responder(['status' => 'ok', 'message' => 'Usuario creado exitosamente', 'id_user' => $idUser], 201);
+    }
+
+    // ===== Pagos =====
+
+    // GET /admin/pagos?id_persona=5
+    public function verPagos() {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $idPersona = $_GET['id_persona'] ?? null;
+        $modelo = new PagoModel($this->db);
+        $pagos = $modelo->listar($idPersona);
+
+        if ($pagos === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo obtener los pagos'], 500);
+        }
+        $this->responder(['status' => 'ok', 'pagos' => $pagos]);
+    }
+
+    // POST /admin/pagos  body: { id_persona, monto, id_membresia?, fecha?, metodo_pago? }
+    public function crearPago() {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $body = $this->cuerpo();
+        if (empty($body['id_persona']) || !isset($body['monto'])) {
+            return $this->responder(['status' => 'error', 'message' => 'Faltan id_persona o monto'], 400);
+        }
+
+        $modelo = new PagoModel($this->db);
+        $id = $modelo->crear($body);
+
+        if ($id === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo registrar el pago'], 500);
+        }
+        $this->responder(['status' => 'ok', 'id_pago' => $id], 201);
+    }
+
+    // PUT /admin/pagos/:id  body: { monto?, id_membresia?, fecha?, metodo_pago? }
+    public function actualizarPago($idPago) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $body = $this->cuerpo();
+        $modelo = new PagoModel($this->db);
+        $ok = $modelo->actualizar($idPago, $body);
+
+        if ($ok === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo actualizar el pago'], 500);
+        }
+        $this->responder(['status' => 'ok', 'message' => 'Pago actualizado']);
+    }
+
+    // DELETE /admin/pagos/:id
+    public function eliminarPago($idPago) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $modelo = new PagoModel($this->db);
+        $ok = $modelo->eliminar($idPago);
+
+        if ($ok === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo eliminar el pago'], 500);
+        }
+        $this->responder(['status' => 'ok', 'message' => 'Pago eliminado']);
+    }
+
+    // ===== Puntos =====
+
+    // GET /admin/puntos?id_persona=5
+    public function verPuntos() {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $idPersona = $_GET['id_persona'] ?? null;
+        $modelo = new PuntoModel($this->db);
+        $puntos = $modelo->listar($idPersona);
+
+        if ($puntos === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo obtener los puntos'], 500);
+        }
+        $this->responder(['status' => 'ok', 'puntos' => $puntos]);
+    }
+
+    // POST /admin/puntos  body: { id_persona, cantidad, descripcion? }  (cantidad negativa = descuento)
+    public function agregarPuntos() {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $body = $this->cuerpo();
+        if (empty($body['id_persona']) || !isset($body['cantidad'])) {
+            return $this->responder(['status' => 'error', 'message' => 'Faltan id_persona o cantidad'], 400);
+        }
+
+        $modelo = new PuntoModel($this->db);
+        $id = $modelo->agregarManual($body['id_persona'], $body['cantidad'], $body['descripcion'] ?? null);
+
+        if ($id === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo agregar los puntos'], 500);
+        }
+        $this->responder(['status' => 'ok', 'id_punto' => $id], 201);
+    }
+
+    // PUT /admin/puntos/:id  body: { cantidad?, descripcion? }
+    public function actualizarPuntos($idPunto) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $body = $this->cuerpo();
+        $modelo = new PuntoModel($this->db);
+        $ok = $modelo->actualizar($idPunto, $body);
+
+        if ($ok === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo actualizar los puntos'], 500);
+        }
+        $this->responder(['status' => 'ok', 'message' => 'Puntos actualizados']);
+    }
+
+    // DELETE /admin/puntos/:id
+    public function eliminarPuntos($idPunto) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $modelo = new PuntoModel($this->db);
+        $ok = $modelo->eliminar($idPunto);
+
+        if ($ok === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo eliminar los puntos'], 500);
+        }
+        $this->responder(['status' => 'ok', 'message' => 'Puntos eliminados']);
+    }
+
+    // ===== Productos =====
+
+    // GET /admin/productos?categoria=Pesas
+    public function verProductos() {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $categoria = $_GET['categoria'] ?? null;
+        $modelo = new ProductoModel($this->db);
+        $productos = $modelo->listar($categoria);
+
+        if ($productos === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo obtener la lista de productos'], 500);
+        }
+        $this->responder(['status' => 'ok', 'productos' => $productos]);
+    }
+
+    // GET /admin/productos/:id
+    public function verProducto($idProducto) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $modelo = new ProductoModel($this->db);
+        $producto = $modelo->ver($idProducto);
+
+        if ($producto === false) {
+            return $this->responder(['status' => 'error', 'message' => 'Producto no encontrado'], 404);
+        }
+        $this->responder(['status' => 'ok', 'producto' => $producto]);
+    }
+
+    // POST /admin/productos  body: { nombre, categoria, precio, imagen? (data URL base64) }
+    public function crearProducto() {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $body = $this->cuerpo();
+
+        if (empty($body['nombre']) || empty($body['categoria']) || !isset($body['precio']) || $body['precio'] === '') {
+            return $this->responder(['status' => 'error', 'message' => 'Faltan campos obligatorios (nombre, categoria o precio)'], 400);
+        }
+        if (!in_array($body['categoria'], ProductoModel::$categoriasValidas, true)) {
+            return $this->responder(['status' => 'error', 'message' => 'Categoría inválida. Debe ser: ' . implode(', ', ProductoModel::$categoriasValidas)], 400);
+        }
+        if (!is_numeric($body['precio']) || $body['precio'] < 0) {
+            return $this->responder(['status' => 'error', 'message' => 'El precio debe ser un número positivo'], 400);
+        }
+
+        $imagenUrl = null;
+        if (!empty($body['imagen'])) {
+            $imagenUrl = ImagenUtil::guardarDesdeBase64($body['imagen']);
+            if ($imagenUrl === false) {
+                return $this->responder(['status' => 'error', 'message' => 'La imagen no es válida (formatos permitidos: jpg, png, webp, gif, avif; máx. 5MB)'], 400);
+            }
+        }
+
+        $modelo = new ProductoModel($this->db);
+        $idProducto = $modelo->crear([
+            'nombre' => $body['nombre'],
+            'categoria' => $body['categoria'],
+            'precio' => $body['precio'],
+            'imagen_url' => $imagenUrl,
+        ]);
+
+        if ($idProducto === false) {
+            if ($imagenUrl) ImagenUtil::eliminar($imagenUrl);
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo crear el producto'], 500);
+        }
+
+        $this->responder(['status' => 'ok', 'message' => 'Producto creado exitosamente', 'id_producto' => $idProducto, 'imagen_url' => $imagenUrl], 201);
+    }
+
+    // PUT /admin/productos/:id  body: { nombre?, categoria?, precio?, imagen? (data URL base64) }
+    public function actualizarProducto($idProducto) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $body = $this->cuerpo();
+        $modelo = new ProductoModel($this->db);
+
+        $actual = $modelo->ver($idProducto);
+        if ($actual === false) {
+            return $this->responder(['status' => 'error', 'message' => 'Producto no encontrado'], 404);
+        }
+
+        if (isset($body['categoria']) && !in_array($body['categoria'], ProductoModel::$categoriasValidas, true)) {
+            return $this->responder(['status' => 'error', 'message' => 'Categoría inválida. Debe ser: ' . implode(', ', ProductoModel::$categoriasValidas)], 400);
+        }
+        if (isset($body['precio']) && (!is_numeric($body['precio']) || $body['precio'] < 0)) {
+            return $this->responder(['status' => 'error', 'message' => 'El precio debe ser un número positivo'], 400);
+        }
+
+        $datosActualizar = $body;
+        $imagenAnterior = $actual['imagen_url'];
+        $imagenNueva = null;
+
+        // Si mandan una imagen nueva, la guardamos y reemplazamos el campo imagen_url
+        if (!empty($body['imagen'])) {
+            $imagenNueva = ImagenUtil::guardarDesdeBase64($body['imagen']);
+            if ($imagenNueva === false) {
+                return $this->responder(['status' => 'error', 'message' => 'La imagen no es válida (formatos permitidos: jpg, png, webp, gif, avif; máx. 5MB)'], 400);
+            }
+            $datosActualizar['imagen_url'] = $imagenNueva;
+        }
+        unset($datosActualizar['imagen']); // no es una columna de la tabla
+
+        $ok = $modelo->actualizar($idProducto, $datosActualizar);
+        if ($ok === false) {
+            if ($imagenNueva) ImagenUtil::eliminar($imagenNueva);
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo actualizar el producto'], 500);
+        }
+
+        // Si se reemplazó la imagen, borramos el archivo viejo del disco
+        if ($imagenNueva && $imagenAnterior) {
+            ImagenUtil::eliminar($imagenAnterior);
+        }
+
+        $this->responder(['status' => 'ok', 'message' => 'Producto actualizado']);
+    }
+
+    // DELETE /admin/productos/:id
+    public function eliminarProducto($idProducto) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $modelo = new ProductoModel($this->db);
+
+        $actual = $modelo->ver($idProducto);
+        if ($actual === false) {
+            return $this->responder(['status' => 'error', 'message' => 'Producto no encontrado'], 404);
+        }
+
+        $ok = $modelo->eliminar($idProducto);
+        if ($ok === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo eliminar el producto'], 500);
+        }
+
+        // Borramos también la imagen del disco, si tenía
+        if (!empty($actual['imagen_url'])) {
+            ImagenUtil::eliminar($actual['imagen_url']);
+        }
+
+        $this->responder(['status' => 'ok', 'message' => 'Producto eliminado']);
+    }
+}

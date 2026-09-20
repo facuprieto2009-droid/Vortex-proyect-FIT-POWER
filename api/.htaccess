@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c> 
+RewriteEngine On
+# Si la ruta que piden es un directorio físico que existe, dejalo pasar
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Si la ruta que piden es un archivo físico que existe, dejalo pasar
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# Si no existe ni el archivo ni la carpeta, mandá toda la URL al index.php
+# La bandera [QSA] mantiene los parámetros GET que vengan en la URL (?id=1)
+# La bandera [L] indica que esta es la última regla a ejecutar
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+</IfModule>
