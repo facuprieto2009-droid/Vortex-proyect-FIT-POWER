@@ -37,7 +37,9 @@ class AuthModel {
     }
 
     public function registrar($email, $passwordHash, $nombre) {
-        $idRol = $this->idRolPorNombre('Cliente');
+        // En la base el rol de los socios se llama 'Usuario' ('Cliente' queda como respaldo por si se renombra)
+        $idRol = $this->idRolPorNombre('Usuario');
+        if ($idRol === false) $idRol = $this->idRolPorNombre('Cliente');
         if ($idRol === false) return false;
 
         try {
@@ -65,7 +67,7 @@ class AuthModel {
             $this->db->commit();
             return $idUser;
         } catch (\Exception $e) {
-            $this->db->rollBack();
+            if ($this->db->inTransaction()) $this->db->rollBack();
             return false;
         }
     }

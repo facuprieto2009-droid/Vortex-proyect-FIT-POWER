@@ -8,7 +8,6 @@ class ClienteModel {
         $this->db = $db;
     }
 
-    // El Modelo es el ÚNICO que sabe de SQL
     public function contarClientes() {
         try {
             $stmt = $this->db->query('SELECT COUNT(*) AS total FROM CLIENTES');

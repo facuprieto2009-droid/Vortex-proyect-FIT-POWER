@@ -1,5 +1,6 @@
 // front/dist/js/auth.js
 // Login, registro, logout, cambio de contraseña, y el guard de sesión para los paneles.
+// Rutas absolutas desde la raíz del sitio para que funcionen desde cualquier carpeta.
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -22,17 +23,19 @@ document.addEventListener('DOMContentLoaded', function () {
             const res = await API.request('/login', 'POST', { email, password });
 
             if (res.status !== 'ok') {
-                return mostrarMensaje('authMsg', res.message || 'No se pudo iniciar sesión', 'error');
+                return mostrarMensaje('authMsg', I18N.msg(res.message) || I18N.t('auth_login_error'), 'error');
             }
 
-            // Redirige según el rol
+            // Redirige según el rol (rutas absolutas)
             const rol = res.usuario.nombre_rol;
             if (rol === 'Administrador') {
-                window.location.href = 'VistaAdministradores.html';
+                window.location.href = '/front/dist/pages/vistas/VistaAdministradores.html';
             } else if (rol === 'Entrenador') {
-                window.location.href = 'VistaEntrenadores.html';
+                window.location.href = '/front/dist/pages/vistas/VistaEntrenadores.html';
+            } else if (rol === 'Usuario' || rol === 'Cliente') {
+                window.location.href = '/front/dist/pages/vistas/VistaUsuario.html';
             } else {
-                window.location.href = '../../index.html';
+                window.location.href = '/front/index.html';
             }
         });
     }
@@ -42,17 +45,25 @@ document.addEventListener('DOMContentLoaded', function () {
     if (registroForm) {
         registroForm.addEventListener('submit', async function (e) {
             e.preventDefault();
+                        const nombre = document.getElementById('registroNombre').value.trim();
             const email = document.getElementById('registroEmail').value.trim();
             const password = document.getElementById('registroPass').value;
+            const password2 = document.getElementById('registroPass2').value;
 
-            const res = await API.request('/register', 'POST', { email, password });
-
-            if (res.status !== 'ok') {
-                return mostrarMensaje('authMsg', res.message || 'No se pudo completar el registro', 'error');
+            if (password.length < 6) {
+                return mostrarMensaje('authMsg', I18N.t('auth_pass_corta'), 'error');
+            }
+            if (password !== password2) {
+                return mostrarMensaje('authMsg', I18N.t('auth_pass_no_coincide'), 'error');
             }
 
-            mostrarMensaje('authMsg', 'Cuenta creada. Ya podés iniciar sesión.', 'ok');
-            setTimeout(() => window.location.href = 'Login.html', 1200);
+            const res = await API.request('/register', 'POST', { nombre, email, password });
+            if (res.status !== 'ok') {
+                return mostrarMensaje('authMsg', I18N.msg(res.message) || I18N.t('auth_registro_error'), 'error');
+            }
+
+            mostrarMensaje('authMsg', I18N.t('auth_cuenta_creada'), 'ok');
+            setTimeout(() => window.location.href = '/front/dist/pages/login/Login.html', 1200);
         });
     }
 
@@ -61,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (btnLogout) {
         btnLogout.addEventListener('click', async function () {
             await API.request('/logout', 'POST');
-            window.location.href = '../../index.html';
+            window.location.href = '/front/index.html';
         });
     }
 
@@ -77,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const msgEl = document.getElementById('cambiarPassMsg');
             if (msgEl) {
-                msgEl.textContent = res.message || '';
+                msgEl.textContent = I18N.msg(res.message) || '';
                 msgEl.className = 'small mt-2 ' + (res.status === 'ok' ? 'text-success' : 'text-danger');
             }
             if (res.status === 'ok') cambiarPassForm.reset();
@@ -89,21 +100,28 @@ document.addEventListener('DOMContentLoaded', function () {
 // Uso: requiereSesion(['Administrador']) al inicio del script de cada panel.
 // Devuelve el usuario logueado (o null si tuvo que redirigir).
 async function requiereSesion(rolesPermitidos) {
+    await I18N.ready; // el idioma tiene que estar cargado antes de dibujar nada
     const res = await API.request('/session', 'GET');
 
     if (res.status !== 'ok') {
-        window.location.href = 'Login.html';
+        window.location.href = '/front/dist/pages/login/Login.html';
         return null;
     }
 
     if (rolesPermitidos && !rolesPermitidos.includes(res.usuario.nombre_rol)) {
-        alert('No tenés permiso para ver esta página.');
-        window.location.href = '../../index.html';
+        alert(I18N.t('auth_sin_permiso'));
+        window.location.href = '/front/index.html';
         return null;
     }
 
     const nombreEl = document.getElementById('usuarioNombre');
-    if (nombreEl) nombreEl.textContent = res.usuario.nombre + ' (' + res.usuario.nombre_rol + ')';
+    if (nombreEl) {
+        const mostrarNombre = () => {
+            nombreEl.textContent = res.usuario.nombre + ' (' + I18N.rol(res.usuario.nombre_rol) + ')';
+        };
+        mostrarNombre();
+        document.addEventListener('languageChanged', mostrarNombre);
+    }
 
     return res.usuario;
 }

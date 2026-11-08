@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" href="../../assets/logos/FD3.png" sizes="any">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title_entrenador">FitPower - Panel de Entrenador</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/mobile.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+</head>
+<body class="negroint">
+    <header>
+        <nav class="navbar align-items-center" style="background-color:#2BFF52;">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="../../../index.html"><img src="../../assets/logos/FD2.png" alt="FitPower" height="40"></a>
+                <div class="d-flex align-items-center text-dark jost">
+                    <div class="selector-idioma me-3" role="group" aria-label="Idioma" data-i18n-aria-label="idioma_selector">
+                        <button type="button" data-idioma="es" class="activo" aria-pressed="true">ES</button>
+                        <button type="button" data-idioma="en" aria-pressed="false">EN</button>
+                    </div>
+                    <span id="usuarioNombre" class="me-3 fw-bold"></span>
+                    <button class="btn btn-sm btn-dark me-2" data-bs-toggle="modal" data-bs-target="#modalPassword" data-i18n="panel_cambiar_pass">Cambiar contraseña</button>
+                    <button id="btnLogout" class="btn btn-sm btn-outline-dark" data-i18n="panel_logout">Cerrar sesión</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container py-4">
+        <h1 class="bebas text-center mb-4" data-i18n="ent_titulo">PANEL DE ENTRENADOR</h1>
+
+        <!-- ===== CLIENTES ===== -->
+        <section class="mb-5">
+            <h2 class="bebas"><span data-i18n="ent_mis_clientes">Mis clientes</span> <span class="badge verdeint text-dark" id="cantidadClientes">0</span></h2>
+
+            <form id="formAsignarCliente" class="d-flex gap-2 mb-3 jost flex-wrap">
+                <input type="number" id="inputIdCliente" class="form-control" style="max-width:220px" placeholder="ID de persona (cliente)" data-i18n-placeholder="ph_id_cliente" required>
+                <button type="submit" class="btn verdeint text-dark" data-i18n="ent_asignar_cliente">Asignar cliente</button>
+            </form>
+            <div id="msgClientes"></div>
+
+            <div class="table-responsive">
+                <table class="table table-dark table-striped align-middle" id="tablaClientes">
+                    <thead>
+                        <tr><th data-i18n="f_nombre">Nombre</th><th data-i18n="f_email">Email</th><th data-i18n="f_asignado_desde">Asignado desde</th><th></th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ===== FICHA DEL CLIENTE SELECCIONADO ===== -->
+        <section id="panelFicha" class="d-none">
+            <h2 class="bebas"><span data-i18n="ent_ficha_de">Ficha de</span> <span id="fichaClienteNombre" class="verdeint-text"></span></h2>
+
+            <!-- Actividad / peso -->
+            <div class="mb-4">
+                <h3 class="bebas fs-4" data-i18n="ent_ejercicios_peso">Ejercicios y peso levantado</h3>
+
+                <form id="formNuevaActividad" class="row g-2 mb-3 jost">
+                    <div class="col-md-3">
+                        <select id="actividadEjercicio" class="form-select"></select>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="date" id="actividadFecha" class="form-control" title="Fecha" data-i18n-title="f_fecha">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" id="actividadSeries" class="form-control" placeholder="Series" data-i18n-placeholder="f_series" min="1" value="1">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" step="0.5" id="actividadPeso" class="form-control" placeholder="Peso (kg)" data-i18n-placeholder="ph_peso_kg">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn verdeint text-dark w-100" data-i18n="btn_registrar">Registrar</button>
+                    </div>
+                </form>
+                <div id="msgActividad"></div>
+
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped align-middle" id="tablaActividad">
+                        <thead>
+                            <tr><th data-i18n="f_ejercicio">Ejercicio</th><th data-i18n="f_fecha">Fecha</th><th data-i18n="f_series">Series</th><th data-i18n="f_peso">Peso</th><th data-i18n="f_calorias">Calorías</th><th></th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Rutinas del cliente -->
+            <div class="mb-4">
+                <h3 class="bebas fs-4" data-i18n="ent_rutinas_asignadas">Rutinas asignadas</h3>
+
+                <form id="formAsignarRutinaExistente" class="d-flex gap-2 mb-3 jost flex-wrap">
+                    <select id="rutinaExistenteSelect" class="form-select" style="max-width:320px"></select>
+                    <button type="submit" class="btn verdeint text-dark" data-i18n="ent_asignar_al_cliente">Asignar al cliente</button>
+                </form>
+                <div id="msgRutinas"></div>
+
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped align-middle" id="tablaRutinasCliente">
+                        <thead>
+                            <tr><th data-i18n="f_nombre">Nombre</th><th data-i18n="f_dias">Días</th><th></th></tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== EJERCICIOS (catálogo general) ===== -->
+        <section class="mb-5">
+            <h2 class="bebas" data-i18n="ent_ejercicios_h2">Ejercicios</h2>
+
+            <div class="d-flex justify-content-end align-items-center mb-3 jost">
+                <button class="btn verdeint text-dark fw-bold" data-bs-toggle="modal" data-bs-target="#modalCrearEjercicio" data-i18n="ent_nuevo_ejercicio">
+                    + Nuevo Ejercicio
+                </button>
+            </div>
+            <div id="msgEjercicios"></div>
+
+            <div class="table-responsive">
+                <table class="table table-dark table-striped align-middle" id="tablaEjercicios">
+                    <thead>
+                        <tr><th data-i18n="f_nombre">Nombre</th><th data-i18n="f_grupo">Grupo muscular</th><th data-i18n="f_video">Video</th><th></th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ===== RUTINAS (catálogo general) ===== -->
+        <section class="mb-5">
+            <h2 class="bebas" data-i18n="ent_rutinas_h2">Rutinas</h2>
+
+            <div class="d-flex justify-content-end align-items-center mb-3 jost">
+                <button class="btn verdeint text-dark fw-bold" data-bs-toggle="modal" data-bs-target="#modalCrearRutina" data-i18n="ent_nueva_rutina">
+                    + Nueva Rutina
+                </button>
+            </div>
+            <div id="msgCatalogoRutinas"></div>
+
+            <div class="table-responsive">
+                <table class="table table-dark table-striped align-middle" id="tablaRutinas">
+                    <thead>
+                        <tr><th data-i18n="f_nombre">Nombre</th><th data-i18n="f_dias">Días</th><th data-i18n="f_ejercicios">Ejercicios</th><th></th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal: crear ejercicio -->
+    <div class="modal fade" id="modalCrearEjercicio" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content negroint jost">
+                <div class="modal-header">
+                    <h5 class="modal-title bebas" data-i18n="modal_crear_ejercicio">Crear Nuevo Ejercicio</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formCrearEjercicio">
+                        <label class="form-label small" data-i18n="f_nombre">Nombre</label>
+                        <input type="text" id="nuevoEjercicioNombre" class="form-control mb-2" maxlength="100" required>
+
+                        <label class="form-label small" data-i18n="f_grupo">Grupo muscular</label>
+                        <input type="text" id="nuevoEjercicioGrupo" class="form-control mb-2" maxlength="50" placeholder="Ej: Pecho, Piernas, Espalda" data-i18n-placeholder="ph_grupo_ej" required>
+
+                        <label class="form-label small" data-i18n="lbl_descripcion_opc">Descripción (opcional)</label>
+                        <textarea id="nuevoEjercicioDescripcion" class="form-control mb-2" rows="2" maxlength="255"></textarea>
+
+                        <label class="form-label small" data-i18n="lbl_calorias_unidad">Calorías por unidad (opcional)</label>
+                        <input type="number" id="nuevoEjercicioCalorias" class="form-control mb-2" min="0" step="1" value="0">
+
+                        <label class="form-label small" data-i18n="lbl_video_enlace">Enlace del video (opcional)</label>
+                        <input type="url" id="nuevoEjercicioVideo" class="form-control mb-1" maxlength="500" placeholder="https://www.youtube.com/watch?v=...">
+                        <div class="form-text mb-3" data-i18n="ent_video_ayuda">YouTube, Vimeo o un archivo directo .mp4 / .webm / .ogg</div>
+
+                        <button type="submit" class="btn verdeint text-dark w-100" data-i18n="btn_crear_ejercicio">Crear Ejercicio</button>
+                        <div id="msgCrearEjercicio"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: editar ejercicio -->
+    <div class="modal fade" id="modalEditarEjercicio" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content negroint jost">
+                <div class="modal-header">
+                    <h5 class="modal-title bebas" data-i18n="modal_editar_ejercicio">Editar ejercicio</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarEjercicio">
+                        <label class="form-label small" data-i18n="f_nombre">Nombre</label>
+                        <input type="text" id="editEjercicioNombre" class="form-control mb-2" maxlength="100" required>
+
+                        <label class="form-label small" data-i18n="f_grupo">Grupo muscular</label>
+                        <input type="text" id="editEjercicioGrupo" class="form-control mb-2" maxlength="50" placeholder="Ej: Pecho, Piernas, Espalda" data-i18n-placeholder="ph_grupo_ej" required>
+
+                        <label class="form-label small" data-i18n="lbl_descripcion_opc">Descripción (opcional)</label>
+                        <textarea id="editEjercicioDescripcion" class="form-control mb-2" rows="2" maxlength="255"></textarea>
+
+                        <label class="form-label small" data-i18n="lbl_calorias_unidad">Calorías por unidad (opcional)</label>
+                        <input type="number" id="editEjercicioCalorias" class="form-control mb-2" min="0" step="1" value="0">
+
+                        <label class="form-label small" data-i18n="lbl_video_enlace">Enlace del video (opcional)</label>
+                        <input type="url" id="editEjercicioVideo" class="form-control mb-1" maxlength="500" placeholder="https://www.youtube.com/watch?v=...">
+                        <div class="form-text mb-3" data-i18n="ent_video_ayuda">YouTube, Vimeo o un archivo directo .mp4 / .webm / .ogg</div>
+
+                        <button type="submit" class="btn verdeint text-dark w-100" data-i18n="btn_guardar">Guardar cambios</button>
+                        <div id="msgEditarEjercicio"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: ver video del ejercicio -->
+    <div class="modal fade" id="modalVerVideo" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content negroint jost">
+                <div class="modal-header">
+                    <h5 class="modal-title bebas" id="videoEjercicioNombre"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="contenedorVideo"></div>
+                    <p id="videoEjercicioDescripcion" class="small text-secondary mt-3 mb-0"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: crear rutina -->
+    <div class="modal fade" id="modalCrearRutina" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content negroint jost">
+                <div class="modal-header">
+                    <h5 class="modal-title bebas" data-i18n="modal_crear_rutina">Crear Nueva Rutina</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formCrearRutina">
+                        <label class="form-label small" data-i18n="f_nombre">Nombre</label>
+                        <input type="text" id="rutinaNombre" class="form-control mb-2" placeholder="Nombre de la rutina" data-i18n-placeholder="ph_nombre_rutina" required>
+
+                        <label class="form-label small" data-i18n="f_dias">Días</label>
+                            <div id="rutinaDias" class="dias-botones d-flex flex-wrap gap-2 mb-2">
+                                <button type="button" class="btn btn-outline-secondary btn-sm dia-btn" data-dia="Lunes" aria-pressed="false" data-i18n="dia_lun">Lunes</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm dia-btn" data-dia="Martes" aria-pressed="false" data-i18n="dia_mar">Martes</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm dia-btn" data-dia="Miercoles" aria-pressed="false" data-i18n="dia_mie">Miércoles</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm dia-btn" data-dia="Jueves" aria-pressed="false" data-i18n="dia_jue">Jueves</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm dia-btn" data-dia="Viernes" aria-pressed="false" data-i18n="dia_vie">Viernes</button>
+                            </div>
+                        
+                        <label for="rutinaEjerciciosNuevos" class="form-label small" data-i18n="lbl_ejercicios_multi">Ejercicios (opcional, podés elegir varios)</label>
+                        <select id="rutinaEjerciciosNuevos" class="form-select mb-3" multiple size="6"></select>
+
+                        <button type="submit" class="btn verdeint text-dark w-100" data-i18n="btn_crear_rutina">Crear Rutina</button>
+                        <div id="msgCrearRutina"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: editar rutina -->
+    <div class="modal fade" id="modalEditarRutina" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content negroint jost">
+                <div class="modal-header">
+                    <h5 class="modal-title bebas" data-i18n="modal_editar_rutina">Editar rutina</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarRutina">
+                        <label class="form-label small" data-i18n="f_nombre">Nombre</label>
+                        <input type="text" id="editRutinaNombre" class="form-control mb-2" required>
+
+                        <label class="form-label small" data-i18n="f_dias">Días</label>
+                            <div id="editRutinaDias" class="dias-botones d-flex flex-wrap gap-2 mb-3">
+                                <button type="button" class="btn btn-outline-secondary btn-sm dia-btn" data-dia="Lunes" aria-pressed="false" data-i18n="dia_lun">Lunes</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm dia-btn" data-dia="Martes" aria-pressed="false" data-i18n="dia_mar">Martes</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm dia-btn" data-dia="Miercoles" aria-pressed="false" data-i18n="dia_mie">Miércoles</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm dia-btn" data-dia="Jueves" aria-pressed="false" data-i18n="dia_jue">Jueves</button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm dia-btn" data-dia="Viernes" aria-pressed="false" data-i18n="dia_vie">Viernes</button>
+                            </div>
+
+                        <button type="submit" class="btn verdeint text-dark w-100" data-i18n="btn_guardar">Guardar cambios</button>
+                        <div id="msgEditarRutina"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: asignar rutina (y sus ejercicios) a mis clientes -->
+    <div class="modal fade" id="modalAsignarRutina" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content negroint jost">
+                <div class="modal-header">
+                    <h5 class="modal-title bebas"><span data-i18n="modal_asignar_rutina">Asignar rutina:</span> <span id="asignarRutinaNombre" class="verdeint-text"></span></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAsignarRutinaClientes">
+                        <p class="small text-secondary mb-2" data-i18n="ent_asignar_ayuda">Elegí los clientes que van a recibir esta rutina con todos sus ejercicios.</p>
+                        <div id="listaClientesAsignar" class="mb-3"></div>
+                        <button type="submit" class="btn verdeint text-dark w-100" data-i18n="btn_asignar_seleccionados">Asignar a los seleccionados</button>
+                        <div id="msgAsignarRutina"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: detalle de rutina (ejercicios que la componen) -->
+    <div class="modal fade" id="modalDetalleRutina" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content negroint jost">
+                <div class="modal-header">
+                    <h5 class="modal-title bebas" id="detalleRutinaNombre"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAgregarEjercicioRutina" class="d-flex gap-2 mb-3">
+                        <select id="rutinaEjercicioSelect" class="form-select"></select>
+                        <button type="submit" class="btn verdeint text-dark" data-i18n="btn_agregar">Agregar</button>
+                    </form>
+
+                    <table class="table table-dark table-striped align-middle" id="tablaEjerciciosRutina">
+                        <thead><tr><th data-i18n="f_ejercicio">Ejercicio</th><th data-i18n="f_grupo">Grupo muscular</th><th></th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: cambiar contraseña -->
+    <div class="modal fade" id="modalPassword" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content negroint jost">
+                <div class="modal-header">
+                    <h5 class="modal-title bebas" data-i18n="panel_cambiar_pass">Cambiar contraseña</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="cambiarPassForm">
+                        <input type="password" id="passActual" class="form-control mb-2" placeholder="Contraseña actual" data-i18n-placeholder="pass_actual" required>
+                        <input type="password" id="passNueva" class="form-control mb-2" placeholder="Contraseña nueva (mín. 6 caracteres)" data-i18n-placeholder="pass_nueva" required>
+                        <button type="submit" class="btn verdeint text-dark w-100" data-i18n="btn_actualizar">Actualizar</button>
+                        <div id="cambiarPassMsg"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="../../js/i18n.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/Entrenador/entrenador.js"></script>
+</body>
+</html>

@@ -4,6 +4,7 @@
 let rolesCache = [];
 let usuarioEditandoId = null;
 let productoEditandoId = null;
+let recompensaEditandoId = null;
 
 document.addEventListener('DOMContentLoaded', async function () {
     const usuario = await requiereSesion(['Administrador']);
@@ -38,6 +39,11 @@ document.addEventListener('DOMContentLoaded', async function () {
     document.getElementById('tablaProductos').addEventListener('click', onClickTablaProductos);
     document.getElementById('formCrearProducto').addEventListener('submit', crearProducto);
     document.getElementById('formEditarProducto').addEventListener('submit', guardarProducto);
+
+    await cargarRecompensas();
+    document.getElementById('tablaRecompensas').addEventListener('click', onClickTablaRecompensas);
+    document.getElementById('formCrearRecompensa').addEventListener('submit', crearRecompensa);
+    document.getElementById('formEditarRecompensa').addEventListener('submit', guardarRecompensa);
 });
 
 // Convierte un <input type="file"> en un data URL base64 (o null si no hay archivo)
@@ -444,4 +450,130 @@ async function eliminarProducto(idProducto) {
     const res = await API.request(`/admin/productos/${idProducto}`, 'DELETE');
     avisar('msgProductos', res);
     if (res.status === 'ok') cargarProductos(document.getElementById('filtroCategoriaProducto').value || null);
+}
+
+/* ===================== CATÁLOGO DE PUNTOS (RECOMPENSAS) ===================== */
+// Igual que Productos, pero el valor es en puntos y no hay categoría.
+
+function escaparHtml(texto) {
+    const div = document.createElement('div');
+    div.textContent = texto ?? '';
+    return div.innerHTML;
+}
+
+async function cargarRecompensas() {
+    const res = await API.request('/admin/recompensas', 'GET');
+    const tbody = document.querySelector('#tablaRecompensas tbody');
+    tbody.innerHTML = '';
+
+    if (res.status !== 'ok' || res.recompensas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-secondary">Sin ítems de puntos</td></tr>';
+        return;
+    }
+
+    res.recompensas.forEach(r => {
+        const tr = document.createElement('tr');
+        const imgTag = r.imagen_url
+            ? `<img src="${escaparHtml(r.imagen_url)}" alt="${escaparHtml(r.nombre)}" style="width:48px;height:48px;object-fit:cover" class="rounded">`
+            : '<span class="text-secondary small">Sin imagen</span>';
+        tr.innerHTML = `
+            <td>${imgTag}</td>
+            <td>${escaparHtml(r.nombre)}</td>
+            <td><span class="badge verdeint text-dark">${Number(r.puntos).toLocaleString('es-UY')} pts</span></td>
+            <td class="text-end">
+                <button class="btn btn-sm btn-outline-light" data-accion="editar" data-id="${r.id_recompensa}">Editar</button>
+                <button class="btn btn-sm btn-outline-danger" data-accion="eliminar" data-id="${r.id_recompensa}">Eliminar</button>
+            </td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+async function crearRecompensa(e) {
+    e.preventDefault();
+
+    let imagenBase64;
+    try {
+        imagenBase64 = await archivoABase64(document.getElementById('nuevaRecompensaImagen'));
+    } catch (err) {
+        avisar('msgRecompensas', { status: 'error', message: err.message });
+        return;
+    }
+
+    const datos = {
+        nombre: document.getElementById('nuevaRecompensaNombre').value,
+        puntos: document.getElementById('nuevaRecompensaPuntos').value,
+        imagen: imagenBase64,
+    };
+
+    const res = await API.request('/admin/recompensas', 'POST', datos);
+    avisar('msgRecompensas', res);
+    if (res.status === 'ok') {
+        document.getElementById('formCrearRecompensa').reset();
+        bootstrap.Modal.getInstance(document.getElementById('modalCrearRecompensa')).hide();
+        cargarRecompensas();
+    }
+}
+
+function onClickTablaRecompensas(e) {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+
+    if (btn.dataset.accion === 'editar') {
+        abrirEdicionRecompensa(btn.dataset.id);
+    } else if (btn.dataset.accion === 'eliminar') {
+        eliminarRecompensa(btn.dataset.id);
+    }
+}
+
+async function abrirEdicionRecompensa(idRecompensa) {
+    const res = await API.request(`/admin/recompensas/${idRecompensa}`, 'GET');
+    if (res.status !== 'ok') return;
+
+    recompensaEditandoId = idRecompensa;
+    document.getElementById('editRecompensaNombre').value = res.recompensa.nombre;
+    document.getElementById('editRecompensaPuntos').value = res.recompensa.puntos;
+    document.getElementById('editRecompensaImagen').value = '';
+
+    const imgActual = document.getElementById('editRecompensaImagenActual');
+    if (res.recompensa.imagen_url) {
+        imgActual.src = res.recompensa.imagen_url;
+        imgActual.style.display = 'block';
+    } else {
+        imgActual.style.display = 'none';
+    }
+
+    new bootstrap.Modal(document.getElementById('modalEditarRecompensa')).show();
+}
+
+async function guardarRecompensa(e) {
+    e.preventDefault();
+    if (!recompensaEditandoId) return;
+
+    let imagenBase64;
+    try {
+        imagenBase64 = await archivoABase64(document.getElementById('editRecompensaImagen'));
+    } catch (err) {
+        avisar('msgRecompensas', { status: 'error', message: err.message });
+        return;
+    }
+
+    const datos = {
+        nombre: document.getElementById('editRecompensaNombre').value,
+        puntos: document.getElementById('editRecompensaPuntos').value,
+    };
+    if (imagenBase64) datos.imagen = imagenBase64; // solo si el admin eligió una nueva
+
+    const res = await API.request(`/admin/recompensas/${recompensaEditandoId}`, 'PUT', datos);
+    avisar('msgRecompensas', res);
+    if (res.status === 'ok') {
+        bootstrap.Modal.getInstance(document.getElementById('modalEditarRecompensa')).hide();
+        cargarRecompensas();
+    }
+}
+
+async function eliminarRecompensa(idRecompensa) {
+    if (!confirm('¿Eliminar este ítem del catálogo de puntos? Esta acción no se puede deshacer.')) return;
+    const res = await API.request(`/admin/recompensas/${idRecompensa}`, 'DELETE');
+    avisar('msgRecompensas', res);
+    if (res.status === 'ok') cargarRecompensas();
 }

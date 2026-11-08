@@ -7,6 +7,9 @@ $router->get('/estado', 'EstadoController@ver');
 // Catálogo público de productos (sin login) — lo usa Pesas.html, Suplementos.html, BarrasProteicas.html
 $router->get('/productos', 'ProductoController@verPublicos');
 
+// Catálogo público de la página de Puntos (sin login) — lo usa Puntos.html
+$router->get('/recompensas', 'RecompensaController@verPublicas');
+
 
 // ===== AUTENTICACIÓN =====
 $router->post('/register', 'AuthController@registrar');
@@ -38,9 +41,14 @@ $router->get('/rutinas/:id', 'EntrenadorController@verRutina');
 $router->get('/rutinas', 'EntrenadorController@verTodasLasRutinas');
 $router->post('/rutinas', 'EntrenadorController@crearRutina');
 $router->put('/rutinas/:id', 'EntrenadorController@actualizarRutina');
+$router->delete('/rutinas/:id', 'EntrenadorController@eliminarRutina');
 $router->post('/rutinas/:id/ejercicios', 'EntrenadorController@agregarEjercicioARutina');
 $router->delete('/rutinas/:id/ejercicios/:idEjercicio', 'EntrenadorController@quitarEjercicioDeRutina');
 $router->get('/ejercicios', 'EntrenadorController@verEjercicios');
+$router->post('/ejercicios', 'EntrenadorController@crearEjercicio');
+$router->get('/ejercicios/:id', 'EntrenadorController@verEjercicio');
+$router->put('/ejercicios/:id', 'EntrenadorController@actualizarEjercicio');
+$router->delete('/ejercicios/:id', 'EntrenadorController@eliminarEjercicio');
 
 
 // ===== ADMINISTRADORES =====
@@ -70,3 +78,18 @@ $router->post('/admin/productos', 'AdminController@crearProducto');
 $router->get('/admin/productos/:id', 'AdminController@verProducto');
 $router->put('/admin/productos/:id', 'AdminController@actualizarProducto');
 $router->delete('/admin/productos/:id', 'AdminController@eliminarProducto');
+
+// Usuario
+$router->get('/mis-rutinas', 'UsuarioController@misRutinas');
+$router->get('/mi-perfil', 'UsuarioController@miPerfil');
+$router->put('/mi-perfil', 'UsuarioController@actualizarMiPerfil');
+$router->get('/mi-entrenador', 'UsuarioController@miEntrenador');
+$router->post('/mi-entrenador/cambio', 'UsuarioController@pedirCambioEntrenador');
+
+// Catálogo de Puntos (recompensas canjeables con puntos)
+$router->get('/admin/recompensas', 'AdminController@verRecompensas');
+$router->post('/admin/recompensas', 'AdminController@crearRecompensa');
+$router->get('/admin/recompensas/:id', 'AdminController@verRecompensa');
+$router->put('/admin/recompensas/:id', 'AdminController@actualizarRecompensa');
+$router->delete('/admin/recompensas/:id', 'AdminController@eliminarRecompensa');
+$router->post('/recompensas/:id/canjear', 'RecompensaController@canjear');

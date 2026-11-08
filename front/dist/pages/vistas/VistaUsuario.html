@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" href="../../assets/logos/FD3.png" sizes="any">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title_usuario">FitPower - Mis rutinas</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../css/mobile.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        .dia-tab { color: #fff; border: 1px solid #555; background: transparent; }
+        .dia-tab:hover { border-color: #2BFF52; color: #2BFF52; }
+        .dia-tab.active { background-color: #2BFF52; border-color: #2BFF52; color: #000; font-weight: 600; }
+        .dia-tab .badge { background-color: #444; color: #fff; }
+        .dia-tab.active .badge { background-color: #000; color: #2BFF52; }
+        .dia-tab.hoy::after { content: " • " attr(data-hoy); font-size: .75em; }
+    </style>
+</head>
+<body class="negroint">
+
+    <header>
+        <nav class="navbar align-items-center" style="background-color:#2BFF52;">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="../../../index.html"><img src="../../assets/logos/FD2.png" alt="FitPower" height="40"></a>
+                <div class="d-flex align-items-center text-dark jost">
+                    <div class="selector-idioma me-3" role="group" aria-label="Idioma" data-i18n-aria-label="idioma_selector">
+                        <button type="button" data-idioma="es" class="activo" aria-pressed="true">ES</button>
+                        <button type="button" data-idioma="en" aria-pressed="false">EN</button>
+                    </div>
+                    <span id="usuarioNombre" class="me-3 fw-bold"></span>
+                    <button class="btn btn-sm btn-dark me-2" data-bs-toggle="modal" data-bs-target="#modalPassword" data-i18n="panel_cambiar_pass">Cambiar contraseña</button>
+                    <button id="btnLogout" class="btn btn-sm btn-outline-dark" data-i18n="panel_logout">Cerrar sesión</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container py-4 jost">
+
+        <!-- ===== TARJETA DE PERFIL ===== -->
+        <section class="perfil-card mb-5">
+            <div class="perfil-top">
+                <div class="perfil-avatar" id="perfilAvatar" aria-hidden="true"></div>
+
+                <div class="perfil-identidad">
+                    <p class="perfil-saludo" data-i18n="user_saludo">¡Hola!</p>
+                    <h1 class="perfil-nombre bebas" id="perfilNombre">&nbsp;</h1>
+                    <div class="perfil-chips" id="perfilChips"></div>
+                </div>
+
+                <button type="button" class="btn btn-sm btn-outline-light perfil-editar"
+                        data-bs-toggle="modal" data-bs-target="#modalEditarPerfil"
+                        data-i18n="user_editar_datos">Editar mis datos</button>
+            </div>
+
+            <!-- Los 6 datos (carné, peso, altura, edad, documento, sexo) los arma user.js -->
+            <div class="perfil-datos" id="perfilDatos"></div>
+        </section>
+
+        <!-- ===== MI ENTRENADOR ===== -->
+        <section class="mb-5">
+            <h2 class="bebas seccion-titulo" data-i18n="user_mi_entrenador">MI ENTRENADOR</h2>
+            <div id="bloqueEntrenador">
+                <p class="text-secondary mb-0" data-i18n="user_cargando">Cargando...</p>
+            </div>
+        </section>
+
+        <!-- ===== MIS ENTRENAMIENTOS ===== -->
+        <section>
+            <h2 class="bebas seccion-titulo" data-i18n="user_entrenamientos">MIS ENTRENAMIENTOS</h2>
+            <p id="textoHoy" class="text-secondary mb-3"></p>
+
+            <!-- Botones de día (se arman desde user.js) -->
+            <div id="selectorDias" class="d-flex flex-wrap gap-2 mb-4" role="tablist" aria-label="Días de la semana" data-i18n-aria-label="user_dias_aria"></div>
+
+            <!-- Rutinas del día elegido -->
+            <h3 id="tituloDia" class="bebas mb-3"></h3>
+            <div id="rutinasDelDia"></div>
+        </section>
+    </main>
+
+    <!-- Modal: editar mis datos -->
+    <div class="modal fade" id="modalEditarPerfil" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content negroint jost">
+                <div class="modal-header">
+                    <h5 class="modal-title bebas" data-i18n="user_editar_titulo">Editar mis datos</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarPerfil">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label class="form-label small" for="perfilDocumento" data-i18n="user_dato_documento">Documento</label>
+                                <input type="text" id="perfilDocumento" class="form-control" maxlength="20" inputmode="numeric">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small" for="perfilNacimiento" data-i18n="user_form_nacimiento">Fecha de nacimiento</label>
+                                <input type="date" id="perfilNacimiento" class="form-control">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small" for="perfilSexo" data-i18n="user_dato_sexo">Sexo</label>
+                                <select id="perfilSexo" class="form-select">
+                                    <option value="" data-i18n="user_sexo_elegir">Sin especificar</option>
+                                    <option value="Femenino" data-i18n="user_sexo_f">Femenino</option>
+                                    <option value="Masculino" data-i18n="user_sexo_m">Masculino</option>
+                                    <option value="Otro" data-i18n="user_sexo_o">Otro</option>
+                                    <option value="Prefiero no decirlo" data-i18n="user_sexo_n">Prefiero no decirlo</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small" for="perfilPeso" data-i18n="user_form_peso">Peso (kg)</label>
+                                <input type="number" id="perfilPeso" class="form-control" step="0.1" min="20" max="400">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small" for="perfilAltura" data-i18n="user_form_altura">Altura (cm)</label>
+                                <input type="number" id="perfilAltura" class="form-control" step="1" min="80" max="260">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small" for="perfilCarne" data-i18n="user_form_carne">Vencimiento del carné de salud</label>
+                                <input type="date" id="perfilCarne" class="form-control">
+                                <div class="form-text text-secondary" data-i18n="user_form_carne_ayuda">Si lo dejás vacío, el carné figura como sin cargar.</div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn verdeint text-dark w-100 mt-3" data-i18n="btn_guardar">Guardar cambios</button>
+                        <div id="msgPerfil" class="small mt-2"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: pedir cambio de entrenador -->
+    <div class="modal fade" id="modalCambioEntrenador" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content negroint jost">
+                <div class="modal-header">
+                    <h5 class="modal-title bebas" data-i18n="user_cambio_titulo">Pedir cambio de entrenador</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formCambioEntrenador">
+                        <label class="form-label small" for="motivoCambio" data-i18n="user_cambio_motivo">¿Por qué querés cambiar?</label>
+                        <textarea id="motivoCambio" class="form-control" rows="4" minlength="10" maxlength="1000" required
+                                  placeholder="Contanos el motivo..." data-i18n-placeholder="user_cambio_motivo_ph"></textarea>
+                        <div class="form-text text-secondary" data-i18n="user_cambio_ayuda">La solicitud le llega al administrador, que es quien hace el cambio.</div>
+
+                        <button type="submit" class="btn verdeint text-dark w-100 mt-3" data-i18n="user_cambio_enviar">Enviar solicitud</button>
+                        <div id="msgCambio" class="small mt-2"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: cambiar contraseña -->
+    <div class="modal fade" id="modalPassword" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content negroint jost">
+                <div class="modal-header">
+                    <h5 class="modal-title bebas" data-i18n="panel_cambiar_pass">Cambiar contraseña</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="cambiarPassForm">
+                        <input type="password" id="passActual" class="form-control mb-2" placeholder="Contraseña actual" data-i18n-placeholder="pass_actual" required>
+                        <input type="password" id="passNueva" class="form-control mb-2" placeholder="Contraseña nueva (mín. 6 caracteres)" data-i18n-placeholder="pass_nueva" required>
+                        <button type="submit" class="btn verdeint text-dark w-100" data-i18n="btn_actualizar">Actualizar</button>
+                        <div id="cambiarPassMsg"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Modal: ver video del ejercicio -->
+    <div class="modal fade" id="modalVerVideo" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content negroint jost">
+                <div class="modal-header">
+                    <h5 class="modal-title bebas" id="videoEjercicioNombre"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="contenedorVideo"></div>
+                    <p id="videoEjercicioDescripcion" class="small text-secondary mt-3 mb-0"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="../../js/i18n.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/auth.js"></script>
+    <script src="../../js/Usuario/user.js"></script>
+</body>
+</html>

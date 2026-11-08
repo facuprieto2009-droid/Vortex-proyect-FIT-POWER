@@ -25,7 +25,7 @@ const API = {
             return json;
         } catch (error) {
             console.error('Error de conexión con la API:', error);
-            return { status: 'error', message: 'No se pudo conectar con la API' };
+            return { status: 'error', message: I18N.t('api_sin_conexion') };
         }
     }
 };

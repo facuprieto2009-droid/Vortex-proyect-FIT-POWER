@@ -56,6 +56,7 @@ a {
     height: 28px;
     filter: brightness(0);
 }
+
 .navbar-collapse {
     background-color: #0B0800;
     margin-top: 12px;
@@ -664,4 +665,375 @@ footer .footer-social a:hover {
 .btn-comprar:hover {
     background-color: #00cc44;
     color: #000000;
+}
+/* ===== SELECTOR DE IDIOMA (ES / EN) ===== */
+.selector-idioma {
+    display: inline-flex;
+    border: 2px solid #0B0800;
+    border-radius: 50px;
+    overflow: hidden;
+}
+.selector-idioma button {
+    background: transparent;
+    border: 0;
+    padding: 2px 12px;
+    font-family: "Jost", sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #0B0800;
+    cursor: pointer;
+}
+.selector-idioma button:hover {
+    background-color: rgba(11, 8, 0, 0.12);
+}
+.selector-idioma button.activo {
+    background-color: #0B0800;
+    color: #2BFF52;
+}
+.selector-idioma button:focus-visible {
+    outline: 2px solid #0B0800;
+    outline-offset: -4px;
+}
+/* ===== VISTA DEL SOCIO (VistaUsuario.html) ===== */
+
+/* --- Tarjeta de perfil: saludo, iniciales y datos personales --- */
+.perfil-card {
+    background-color: #151515;
+    border: 1px solid #2a2a2a;
+    border-radius: 18px;
+    padding: 22px;
+}
+
+.perfil-top {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+/* Círculo con las iniciales del socio (no hay foto en la base) */
+.perfil-avatar {
+    flex: 0 0 auto;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background-color: #2BFF52;
+    color: #0B0800;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 2rem;
+    line-height: 1;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.perfil-identidad {
+    flex: 1 1 200px;
+    min-width: 0;
+}
+
+.perfil-saludo {
+    color: #2BFF52;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.perfil-nombre {
+    color: #ffffff;
+    font-size: 2rem;
+    line-height: 1.1;
+    margin: 2px 0 8px;
+    word-break: break-word;
+}
+
+.perfil-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip-fp {
+    display: inline-block;
+    padding: 4px 12px;
+    border: 1px solid #3a3a3a;
+    border-radius: 999px;
+    color: #cfcfcf;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.chip-fp.chip-ok {
+    border-color: rgba(43, 255, 82, 0.5);
+    color: #2BFF52;
+}
+.chip-fp.chip-aviso {
+    border-color: rgba(255, 193, 7, 0.5);
+    color: #ffc107;
+}
+
+.perfil-editar {
+    flex: 0 0 auto;
+    align-self: flex-start;
+}
+
+/* --- Los 6 datos (carné, peso, altura, edad, documento, sexo) --- */
+.perfil-datos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.dato-card {
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    padding: 14px;
+    min-width: 0;
+}
+
+.dato-label {
+    color: #8d8d8d;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 6px;
+}
+
+.dato-valor {
+    color: #ffffff;
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0;
+    word-break: break-word;
+}
+.dato-valor.dato-vacio {
+    color: #6a6a6a;
+    font-size: 1rem;
+    font-weight: 400;
+}
+.dato-valor.estado-ok { color: #2BFF52; }
+.dato-valor.estado-mal { color: #ff6b6b; }
+
+.dato-extra {
+    color: #8d8d8d;
+    font-size: 0.78rem;
+    margin: 4px 0 0;
+}
+
+/* --- Título de cada sección --- */
+.seccion-titulo {
+    color: #ffffff;
+    font-size: 1.6rem;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+    padding-left: 12px;
+    border-left: 4px solid #2BFF52;
+}
+
+/* --- Entrenador asignado --- */
+.entrenador-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    background-color: #151515;
+    border: 1px solid #2a2a2a;
+    border-radius: 18px;
+    padding: 18px;
+}
+.entrenador-vacio {
+    justify-content: center;
+    text-align: center;
+}
+
+.entrenador-avatar {
+    flex: 0 0 auto;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #2a2a2a;
+    color: #2BFF52;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.entrenador-info {
+    flex: 1 1 180px;
+    min-width: 0;
+}
+.entrenador-nombre {
+    color: #ffffff;
+    font-size: 1.5rem;
+    margin: 0 0 4px;
+}
+.entrenador-dato {
+    color: #cfcfcf;
+    font-size: 0.9rem;
+    margin: 0;
+}
+.entrenador-accion { flex: 0 0 auto; }
+
+.aviso-pendiente {
+    max-width: 220px;
+    color: #ffc107;
+    font-size: 0.85rem;
+}
+
+/* --- Rutinas del día --- */
+.rutina-card {
+    background-color: #151515;
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.rutina-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 14px 18px;
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.rutina-ejercicios {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ejercicio-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 18px;
+    border-top: 1px solid #262626;
+    border-left: 3px solid transparent;
+    color: #ffffff;
+    transition: border-left-color 0.15s ease, background-color 0.15s ease;
+}
+.ejercicio-item:hover {
+    border-left-color: #2BFF52;
+    background-color: #1a1a1a;
+}
+
+.ejercicio-nombre { font-weight: 600; }
+
+/* --- Celulares --- */
+@media (max-width: 575.98px) {
+    .perfil-card { padding: 16px; }
+    .perfil-datos { grid-template-columns: repeat(2, 1fr); }
+    .perfil-top { gap: 14px; }
+    .perfil-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 1.6rem;
+    }
+    .perfil-nombre { font-size: 1.6rem; }
+    .perfil-editar { width: 100%; }
+    .entrenador-accion { width: 100%; }
+    .entrenador-accion .btn { width: 100%; }
+    .aviso-pendiente { max-width: none; }
+}
+
+/* ===== Selector de días (rutinas) ===== */
+.dias-botones .dia-btn {
+    min-width: 92px;
+    transition: all 0.15s ease;
+    border-width: 2px;
+}
+
+.dias-botones .dia-btn:hover {
+    border-color: #2BFF52;
+    color: #2BFF52;
+}
+
+.dias-botones .dia-btn.activo {
+    background-color: #2BFF52 !important;
+    color: #0B0800 !important;
+    border-color: #2BFF52 !important;
+    font-weight: 600;
+    box-shadow: 0 0 0 1px #2BFF52;
+}
+
+.dias-botones .dia-btn.activo:hover {
+    background-color: #24d946 !important;
+    color: #0B0800 !important;
+}
+
+/* Chip de puntos en el perfil del usuario */
+.chip-fp.chip-puntos {
+    background-color: #2BFF52;
+    color: #0B0800;
+    font-weight: 700;
+}
+.dato-valor.dato-puntos {
+    color: #2BFF52;
+    font-weight: 700;
+}
+
+/* Logo + selector de idioma juntos (no bajan con el menú hamburguesa) */
+.navbar-brand-idioma {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+.navbar-brand-idioma .navbar-brand {
+    margin-right: 0;
+}
+.navbar .container-fluid {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+}
+/* El menú colapsado ocupa toda la fila de abajo; logo e idioma se quedan arriba */
+.navbar-collapse {
+    flex-basis: 100%;
+}
+
+/* ===== Hover de botones: blanco en vez de transparente ===== */
+.btn:hover,
+.btn:focus,
+.btn-outline-light:hover,
+.btn-outline-light:focus,
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus,
+.btn-outline-dark:hover,
+.btn-outline-dark:focus,
+.btn-sm:hover {
+    background-color: #ffffff !important;
+    border-color: #ffffff !important;
+    color: #0B0800 !important;
+    opacity: 1 !important;
+}
+
+/* Botones verdes de la marca */
+.btn.verdeint:hover,
+.verdeint.btn:hover,
+.btn-success:hover {
+    background-color: #ffffff !important;
+    border-color: #ffffff !important;
+    color: #0B0800 !important;
+}
+
+/* Comprar / canjear / suscribir */
+.btn-comprar:hover,
+.btn-suscribir:hover,
+.btn-ver:hover,
+.btn-auth:hover {
+    background-color: #ffffff !important;
+    color: #0B0800 !important;
+    opacity: 1 !important;
 }

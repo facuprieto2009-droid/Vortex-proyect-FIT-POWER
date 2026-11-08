@@ -23,6 +23,57 @@ class EntrenadorController {
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
     }
 
+    // ===== Validación de ejercicios =====
+
+    // Devuelve [datosLimpios, null] o [null, 'mensaje de error'].
+    // $parcial = true en PUT: solo se validan los campos que vengan en el body.
+    private function validarEjercicio($body, $parcial = false) {
+        $datos = [];
+
+        if (!$parcial || array_key_exists('nombre', $body)) {
+            $nombre = trim($body['nombre'] ?? '');
+            if ($nombre === '') return [null, 'Falta el nombre del ejercicio'];
+            if (mb_strlen($nombre) > 100) return [null, 'El nombre no puede superar 100 caracteres'];
+            $datos['nombre'] = $nombre;
+        }
+
+        if (!$parcial || array_key_exists('grupo_muscular', $body)) {
+            $grupo = trim($body['grupo_muscular'] ?? '');
+            if ($grupo === '') return [null, 'Falta el grupo muscular'];
+            if (mb_strlen($grupo) > 50) return [null, 'El grupo muscular no puede superar 50 caracteres'];
+            $datos['grupo_muscular'] = $grupo;
+        }
+
+        if (!$parcial || array_key_exists('descripcion', $body)) {
+            $desc = trim($body['descripcion'] ?? '');
+            if (mb_strlen($desc) > 255) return [null, 'La descripción no puede superar 255 caracteres'];
+            $datos['descripcion'] = $desc === '' ? null : $desc;
+        }
+
+        if (!$parcial || array_key_exists('calorias_por_unidad', $body)) {
+            $cal = $body['calorias_por_unidad'] ?? 0;
+            if ($cal === '' || $cal === null) $cal = 0;
+            if (!is_numeric($cal) || (int) $cal < 0) return [null, 'Las calorías deben ser un número positivo'];
+            $datos['calorias_por_unidad'] = (int) $cal;
+        }
+
+        if (!$parcial || array_key_exists('video_url', $body)) {
+            $url = trim($body['video_url'] ?? '');
+            if ($url === '') {
+                $datos['video_url'] = null;
+            } else {
+                // Solo http(s): evita guardar cosas como "javascript:..." que luego se usan en un href/src
+                $esoValido = filter_var($url, FILTER_VALIDATE_URL)
+                    && in_array(strtolower(parse_url($url, PHP_URL_SCHEME) ?? ''), ['http', 'https'], true);
+                if (!$esoValido) return [null, 'El enlace del video debe empezar con http:// o https://'];
+                if (strlen($url) > 500) return [null, 'El enlace del video es demasiado largo (máx. 500 caracteres)'];
+                $datos['video_url'] = $url;
+            }
+        }
+
+        return [$datos, null];
+    }
+
     // ===== Usuarios (clientes) del entrenador =====
 
     // GET /entrenadores/:id/clientes
@@ -179,6 +230,18 @@ class EntrenadorController {
         $this->responder(['status' => 'ok', 'message' => 'Rutina actualizada']);
     }
 
+    // DELETE /rutinas/:id  -> borra la rutina (y por CASCADE sus ejercicios y asignaciones a clientes)
+    public function eliminarRutina($idRutina) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $modelo = new RutinaModel($this->db);
+        $ok = $modelo->eliminar($idRutina);
+
+        if ($ok === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo eliminar la rutina'], 500);
+        }
+        $this->responder(['status' => 'ok', 'message' => 'Rutina eliminada']);
+    }
+
     // POST /clientes/:id/rutinas  body: { id_rutinas }
     public function asignarRutina($idCliente) {
         if (!Auth::requiereRol($this->rolesPermitidos)) return;
@@ -247,6 +310,76 @@ class EntrenadorController {
             return $this->responder(['status' => 'error', 'message' => 'No se pudo obtener el catálogo de ejercicios'], 500);
         }
         $this->responder(['status' => 'ok', 'ejercicios' => $ejercicios]);
+    }
+
+    // GET /ejercicios/:id
+    public function verEjercicio($idEjercicio) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $modelo = new RutinaModel($this->db);
+        $ejercicio = $modelo->verEjercicio($idEjercicio);
+
+        if (!$ejercicio) {
+            return $this->responder(['status' => 'error', 'message' => 'Ejercicio no encontrado'], 404);
+        }
+        $this->responder(['status' => 'ok', 'ejercicio' => $ejercicio]);
+    }
+
+    // POST /ejercicios  body: { nombre, grupo_muscular, descripcion?, calorias_por_unidad?, video_url? }
+    public function crearEjercicio() {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        [$datos, $error] = $this->validarEjercicio($this->cuerpo());
+        if ($error) {
+            return $this->responder(['status' => 'error', 'message' => $error], 400);
+        }
+
+        $modelo = new RutinaModel($this->db);
+        $id = $modelo->crearEjercicio($datos);
+
+        if ($id === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo crear el ejercicio'], 500);
+        }
+        $this->responder(['status' => 'ok', 'message' => 'Ejercicio creado', 'id_ejercicio' => $id], 201);
+    }
+
+    // PUT /ejercicios/:id  body: cualquier subconjunto de nombre, grupo_muscular, descripcion, calorias_por_unidad, video_url
+    public function actualizarEjercicio($idEjercicio) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        [$datos, $error] = $this->validarEjercicio($this->cuerpo(), true);
+        if ($error) {
+            return $this->responder(['status' => 'error', 'message' => $error], 400);
+        }
+
+        $modelo = new RutinaModel($this->db);
+        $ok = $modelo->actualizarEjercicio($idEjercicio, $datos);
+
+        if ($ok === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo actualizar el ejercicio'], 500);
+        }
+        $this->responder(['status' => 'ok', 'message' => 'Ejercicio actualizado']);
+    }
+
+    // DELETE /ejercicios/:id
+    // Se bloquea si algún cliente tiene registros con este ejercicio (borrarlo arrastraría su historial).
+    public function eliminarEjercicio($idEjercicio) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $modelo = new RutinaModel($this->db);
+
+        $registros = $modelo->contarRegistrosDeEjercicio($idEjercicio);
+        if ($registros === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo verificar el uso del ejercicio'], 500);
+        }
+        if ($registros > 0) {
+            return $this->responder([
+                'status' => 'error',
+                'message' => "No se puede eliminar: hay $registros registro(s) de actividad de clientes con este ejercicio"
+            ], 409);
+        }
+
+        $ok = $modelo->eliminarEjercicio($idEjercicio);
+        if ($ok === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo eliminar el ejercicio'], 500);
+        }
+        $this->responder(['status' => 'ok', 'message' => 'Ejercicio eliminado']);
     }
 
     // GET /rutinas  -> catálogo completo de rutinas (para asignar una ya existente)

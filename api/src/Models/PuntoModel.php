@@ -75,4 +75,45 @@ class PuntoModel {
             return false;
         }
     }
+
+    // Suma de todos los movimientos de puntos de una persona
+    public function totalDe($idPersona) {
+        try {
+            $stmt = $this->db->prepare(
+                "SELECT COALESCE(SUM(cantidad), 0) AS total
+                 FROM puntos
+                 WHERE id_persona = :id"
+            );
+            $stmt->execute(['id' => $idPersona]);
+            $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+            return (int) $row['total'];
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    // Descuenta puntos usando el mismo INSERT que el admin (origen 'manual')
+    public function canjear($idPersona, $cantidad, $descripcion = null) {
+        $cantidad = abs((int) $cantidad);
+        if ($cantidad <= 0) {
+            return false;
+        }
+
+        $total = $this->totalDe($idPersona);
+        if ($total === false) {
+            return false;
+        }
+
+        if ($total < $cantidad) {
+            return ['ok' => false, 'motivo' => 'insuficientes', 'total' => $total];
+        }
+
+        // cantidad negativa = descuento
+        $id = $this->agregarManual($idPersona, -$cantidad, $descripcion);
+        if ($id === false) {
+            return false;
+        }
+
+        return ['ok' => true, 'total' => $total - $cantidad];
+    }
 }

@@ -5,6 +5,7 @@ use App\Models\UsuarioModel;
 use App\Models\PagoModel;
 use App\Models\PuntoModel;
 use App\Models\ProductoModel;
+use App\Models\RecompensaModel;
 use App\Utils\Auth;
 use App\Utils\ImagenUtil;
 
@@ -363,5 +364,130 @@ class AdminController {
         }
 
         $this->responder(['status' => 'ok', 'message' => 'Producto eliminado']);
+    }
+
+    // ===== Catálogo de Puntos (recompensas) =====
+    // Igual que Productos, pero el valor es en PUNTOS (entero) y no hay categorías.
+
+    // GET /admin/recompensas
+    public function verRecompensas() {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $modelo = new RecompensaModel($this->db);
+        $recompensas = $modelo->listar();
+
+        if ($recompensas === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo obtener el catálogo de puntos'], 500);
+        }
+        $this->responder(['status' => 'ok', 'recompensas' => $recompensas]);
+    }
+
+    // GET /admin/recompensas/:id
+    public function verRecompensa($idRecompensa) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $modelo = new RecompensaModel($this->db);
+        $recompensa = $modelo->ver($idRecompensa);
+
+        if ($recompensa === false) {
+            return $this->responder(['status' => 'error', 'message' => 'Ítem no encontrado'], 404);
+        }
+        $this->responder(['status' => 'ok', 'recompensa' => $recompensa]);
+    }
+
+    // POST /admin/recompensas  body: { nombre, puntos, imagen? (data URL base64) }
+    public function crearRecompensa() {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $body = $this->cuerpo();
+
+        if (empty($body['nombre']) || !isset($body['puntos']) || $body['puntos'] === '') {
+            return $this->responder(['status' => 'error', 'message' => 'Faltan campos obligatorios (nombre o puntos)'], 400);
+        }
+        if (!is_numeric($body['puntos']) || $body['puntos'] < 0 || floor($body['puntos']) != $body['puntos']) {
+            return $this->responder(['status' => 'error', 'message' => 'Los puntos deben ser un número entero positivo'], 400);
+        }
+
+        $imagenUrl = null;
+        if (!empty($body['imagen'])) {
+            $imagenUrl = ImagenUtil::guardarDesdeBase64($body['imagen']);
+            if ($imagenUrl === false) {
+                return $this->responder(['status' => 'error', 'message' => 'La imagen no es válida (formatos permitidos: jpg, png, webp, gif, avif; máx. 5MB)'], 400);
+            }
+        }
+
+        $modelo = new RecompensaModel($this->db);
+        $id = $modelo->crear([
+            'nombre' => $body['nombre'],
+            'puntos' => $body['puntos'],
+            'imagen_url' => $imagenUrl,
+        ]);
+
+        if ($id === false) {
+            if ($imagenUrl) ImagenUtil::eliminar($imagenUrl);
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo crear el ítem'], 500);
+        }
+
+        $this->responder(['status' => 'ok', 'message' => 'Ítem creado exitosamente', 'id_recompensa' => $id, 'imagen_url' => $imagenUrl], 201);
+    }
+
+    // PUT /admin/recompensas/:id  body: { nombre?, puntos?, imagen? (data URL base64) }
+    public function actualizarRecompensa($idRecompensa) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $body = $this->cuerpo();
+        $modelo = new RecompensaModel($this->db);
+
+        $actual = $modelo->ver($idRecompensa);
+        if ($actual === false) {
+            return $this->responder(['status' => 'error', 'message' => 'Ítem no encontrado'], 404);
+        }
+
+        if (isset($body['puntos']) && (!is_numeric($body['puntos']) || $body['puntos'] < 0 || floor($body['puntos']) != $body['puntos'])) {
+            return $this->responder(['status' => 'error', 'message' => 'Los puntos deben ser un número entero positivo'], 400);
+        }
+
+        $datosActualizar = $body;
+        $imagenAnterior = $actual['imagen_url'];
+        $imagenNueva = null;
+
+        if (!empty($body['imagen'])) {
+            $imagenNueva = ImagenUtil::guardarDesdeBase64($body['imagen']);
+            if ($imagenNueva === false) {
+                return $this->responder(['status' => 'error', 'message' => 'La imagen no es válida (formatos permitidos: jpg, png, webp, gif, avif; máx. 5MB)'], 400);
+            }
+            $datosActualizar['imagen_url'] = $imagenNueva;
+        }
+        unset($datosActualizar['imagen']); // no es una columna de la tabla
+
+        $ok = $modelo->actualizar($idRecompensa, $datosActualizar);
+        if ($ok === false) {
+            if ($imagenNueva) ImagenUtil::eliminar($imagenNueva);
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo actualizar el ítem'], 500);
+        }
+
+        if ($imagenNueva && $imagenAnterior) {
+            ImagenUtil::eliminar($imagenAnterior);
+        }
+
+        $this->responder(['status' => 'ok', 'message' => 'Ítem actualizado']);
+    }
+
+    // DELETE /admin/recompensas/:id
+    public function eliminarRecompensa($idRecompensa) {
+        if (!Auth::requiereRol($this->rolesPermitidos)) return;
+        $modelo = new RecompensaModel($this->db);
+
+        $actual = $modelo->ver($idRecompensa);
+        if ($actual === false) {
+            return $this->responder(['status' => 'error', 'message' => 'Ítem no encontrado'], 404);
+        }
+
+        $ok = $modelo->eliminar($idRecompensa);
+        if ($ok === false) {
+            return $this->responder(['status' => 'error', 'message' => 'No se pudo eliminar el ítem'], 500);
+        }
+
+        if (!empty($actual['imagen_url'])) {
+            ImagenUtil::eliminar($actual['imagen_url']);
+        }
+
+        $this->responder(['status' => 'ok', 'message' => 'Ítem eliminado']);
     }
 }

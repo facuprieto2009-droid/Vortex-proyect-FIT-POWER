@@ -1,17 +1,113 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     /* ===== 1. SELECCIONAR PLAN (Mensualidades) ===== */
+    const modalSuscripcionEl = document.getElementById("modalSuscripcion");
+    const formSuscripcion = document.getElementById("formSuscripcion");
+    let planElegido = { nombre: "", precio: "" };
+
     const botonesSuscribir = document.querySelectorAll(".btn-suscribir");
     botonesSuscribir.forEach(function (btn) {
         btn.addEventListener("click", function () {
             document.querySelectorAll(".plan-card").forEach(card => card.classList.remove("seleccionado"));
             const card = btn.closest(".plan-card");
             card.classList.add("seleccionado");
-            const nombrePlan = card.querySelector(".precio").textContent.trim();
-            alert("¡Elegiste el plan de " + nombrePlan + " al mes! En breve te contactamos para activar tu suscripción.");
+
+            const badge = card.querySelector(".plan-badge");
+            const precio = card.querySelector(".precio");
+            planElegido = {
+                nombre: badge ? badge.textContent.trim() : "Plan",
+                precio: precio ? precio.textContent.trim() : ""
+            };
+
+            document.getElementById("suscripcionPlanNombre").textContent = planElegido.nombre;
+            document.getElementById("suscripcionPlanPrecio").textContent = planElegido.precio
+                ? "(" + planElegido.precio + " / mes)"
+                : "";
+
+            // Limpiar formulario y mensaje
+            if (formSuscripcion) formSuscripcion.reset();
+            const msg = document.getElementById("msgSuscripcion");
+            if (msg) { msg.textContent = ""; msg.className = "small mb-2"; }
+
+            if (modalSuscripcionEl) {
+                bootstrap.Modal.getOrCreateInstance(modalSuscripcionEl).show();
+            }
         });
     });
 
+    if (formSuscripcion) {
+        formSuscripcion.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const email = document.getElementById("suscripcionEmail").value.trim();
+            const pass = document.getElementById("suscripcionPass").value;
+            const pass2 = document.getElementById("suscripcionPass2").value;
+            const metodo = document.getElementById("suscripcionPago").value;
+            const msg = document.getElementById("msgSuscripcion");
+
+            function avisar(texto, ok) {
+                if (!msg) return;
+                msg.textContent = texto;
+                msg.className = "small mb-2 " + (ok ? "text-success" : "text-danger");
+            }
+
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                return avisar("Ingresá un email válido.", false);
+            }
+            if (pass.length < 6) {
+                return avisar("La contraseña debe tener al menos 6 caracteres.", false);
+            }
+            if (pass !== pass2) {
+                return avisar("Las contraseñas no coinciden.", false);
+            }
+            if (!metodo) {
+                return avisar("Elegí un método de pago.", false);
+            }
+
+            // Intentamos registrar la cuenta (si la API está disponible)
+            let cuentaCreada = false;
+            try {
+                const res = await fetch("/api/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ email: email, password: pass, nombre: email.split("@")[0] })
+                });
+                const json = await res.json();
+                if (json.status === "ok") {
+                    cuentaCreada = true;
+                } else if (json.message && /ya está registrado/i.test(json.message)) {
+                    cuentaCreada = true;
+                } else if (json.message) {
+                    console.warn("Registro:", json.message);
+                }
+            } catch (err) {
+                console.warn("No se pudo contactar la API de registro:", err);
+            }
+
+            const metodosLabel = {
+                tarjeta: "Tarjeta de crédito / débito",
+                transferencia: "Transferencia bancaria",
+                mercadopago: "Mercado Pago",
+                efectivo: "Efectivo en el gimnasio"
+            };
+
+            avisar(
+                "¡Listo! Pediste el plan " + planElegido.nombre +
+                " (" + (metodosLabel[metodo] || metodo) + "). " +
+                (cuentaCreada
+                    ? "Tu cuenta quedó registrada; en breve activamos la membresía."
+                    : "En breve te contactamos para activar la suscripción."),
+                true
+            );
+
+            formSuscripcion.querySelector("button[type=submit]").disabled = true;
+            setTimeout(function () {
+                const modal = bootstrap.Modal.getInstance(modalSuscripcionEl);
+                if (modal) modal.hide();
+                formSuscripcion.querySelector("button[type=submit]").disabled = false;
+            }, 2200);
+        });
+    }
     /* ===== 2. CAMBIO DE IMÁGENES/MÁQUINAS POR PUNTOS (DOTS) ===== */
     const gruposMaquinas = [
         // Grupo 0 (Primer botón)
